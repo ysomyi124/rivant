@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body { font-family: var(--font-ko); background: var(--bg-light); }
+    .auth-wrap { display: flex; align-items: flex-start; justify-content: center; padding: 60px 20px; min-height: 100vh; }
+    .auth-box { background: var(--white); border-radius: var(--radius-card); padding: 56px 48px; width: 100%; max-width: 560px; box-shadow: var(--shadow); }
+    .auth-logo { text-align: center; margin-bottom: 40px; }
+    .auth-logo img { height: 28px; margin: 0 auto; }
+    .auth-title { font-family: var(--font-en); font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; text-transform: uppercase; }
+    .auth-sub { text-align: center; font-size: 14px; color: var(--desc-text); margin-bottom: 36px; }
+    .form-group { margin-bottom: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--sub-text); }
+    .form-label .required { color: var(--accent); margin-left: 2px; }
+    .form-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 15px; color: var(--black); transition: border-color var(--trans-fast); }
+    .form-input:focus { border-color: var(--black); }
+    .form-input::placeholder { color: var(--desc-text); }
+    .form-hint { font-size: 12px; color: var(--desc-text); margin-top: 6px; }
+    .form-hint.error { color: #e53e3e; }
+    .form-hint.success { color: #38a169; }
+    .terms-group { border: 1.5px solid var(--line); border-radius: var(--radius-input); overflow: hidden; }
+    .term-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); cursor: pointer; }
+    .term-item:last-child { border-bottom: none; }
+    .term-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--black); flex-shrink: 0; cursor: pointer; }
+    .term-item label { font-size: 14px; cursor: pointer; flex: 1; }
+    .term-item label span { font-weight: 600; }
+    .term-item a { font-size: 12px; color: var(--desc-text); text-decoration: underline; flex-shrink: 0; }
+    .term-all { background: var(--bg-light); font-weight: 700; }
+    .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
+    .auth-footer { text-align: center; margin-top: 24px; font-size: 14px; color: var(--desc-text); }
+    .auth-footer a { color: var(--black); font-weight: 700; }
+    .section-divider { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--desc-text); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 28px 0 20px; }
+    @media(max-width:480px) { .auth-box { padding: 36px 20px; } .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" /></a>
+      </div>
+      <h1 class="auth-title">Sign Up</h1>
+      <p class="auth-sub">RIVANT 회원이 되어 다양한 혜택을 누려보세요</p>
+
+      <form id="signupForm">
+        <p class="section-divider">기본 정보</p>
+
+        <div class="form-group">
+          <label class="form-label" for="email">아이디(이메일) <span class="required">*</span></label>
+          <input type="email" id="email" class="form-input" placeholder="example@email.com" required autocomplete="email" />
+          <p class="form-hint" id="emailHint"></p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="password">비밀번호 <span class="required">*</span></label>
+            <input type="password" id="password" class="form-input" placeholder="8자 이상 입력" required autocomplete="new-password" />
+            <p class="form-hint" id="pwHint"></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="passwordConfirm">비밀번호 확인 <span class="required">*</span></label>
+            <input type="password" id="passwordConfirm" class="form-input" placeholder="비밀번호 재입력" required autocomplete="new-password" />
+            <p class="form-hint" id="pwConfirmHint"></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">이름 <span class="required">*</span></label>
+            <input type="text" id="name" class="form-input" placeholder="실명 입력" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">휴대전화 <span class="required">*</span></label>
+            <input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="birth">생년월일</label>
+          <input type="date" id="birth" class="form-input" />
+        </div>
+
+        <p class="section-divider">약관 동의</p>
+
+        <div class="form-group">
+          <div class="terms-group">
+            <div class="term-item term-all">
+              <input type="checkbox" id="allAgree" />
+              <label for="allAgree"><span>전체 동의</span></label>
+            </div>
+            <div class="term-item">
+              <input type="checkbox" id="termsService" required />
+              <label for="termsService"><span>[필수]</span> 이용약관 동의</label>
+              <a href="#">보기</a>
+            </div>
+            <div class="term-item">
+              <input type="checkbox" id="termsPrivacy" required />
+              <label for="termsPrivacy"><span>[필수]</span> 개인정보 처리방침 동의</label>
+              <a href="#">보기</a>
+            </div>
+            <div class="term-item">
+              <input type="checkbox" id="termsMarketing" />
+              <label for="termsMarketing">[선택] 마케팅 수신 동의</label>
+            </div>
+          </div>
+        </div>
+
+        <p class="form-hint error" id="submitError" style="display:none;margin-bottom:12px"></p>
+        <button type="submit" class="btn btn-primary btn-full" id="signupBtn">회원가입</button>
+      </form>
+
+      <div class="auth-footer">
+        이미 회원이신가요? <a href="login.html">로그인</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    // All agree checkbox
+    const allAgree = document.getElementById('allAgree');
+    const checkboxes = ['termsService','termsPrivacy','termsMarketing'].map(id => document.getElementById(id));
+    allAgree.addEventListener('change', () => checkboxes.forEach(cb => cb.checked = allAgree.checked));
+    checkboxes.forEach(cb => cb.addEventListener('change', () => {
+      allAgree.checked = checkboxes.every(c => c.checked);
+    }));
+
+    // Password validation
+    const pw = document.getElementById('password');
+    const pwC = document.getElementById('passwordConfirm');
+    pw.addEventListener('input', () => {
+      const hint = document.getElementById('pwHint');
+      if (pw.value.length < 8) { hint.textContent = '8자 이상 입력해주세요'; hint.className = 'form-hint error'; }
+      else { hint.textContent = '사용 가능한 비밀번호입니다'; hint.className = 'form-hint success'; }
+    });
+    pwC.addEventListener('input', () => {
+      const hint = document.getElementById('pwConfirmHint');
+      if (pw.value !== pwC.value) { hint.textContent = '비밀번호가 일치하지 않습니다'; hint.className = 'form-hint error'; }
+      else if (pwC.value) { hint.textContent = '비밀번호가 일치합니다'; hint.className = 'form-hint success'; }
+    });
+
+    // Submit
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errEl = document.getElementById('submitError');
+      errEl.style.display = 'none';
+      const btn = document.getElementById('signupBtn');
+
+      if (pw.value !== pwC.value) { errEl.textContent = '비밀번호가 일치하지 않습니다.'; errEl.style.display = 'block'; return; }
+      if (!document.getElementById('termsService').checked || !document.getElementById('termsPrivacy').checked) {
+        errEl.textContent = '필수 약관에 동의해주세요.'; errEl.style.display = 'block'; return;
+      }
+
+      btn.textContent = '가입 중...'; btn.disabled = true;
+      try {
+        await RivantApp.Auth.signUp(
+          document.getElementById('email').value.trim(),
+          pw.value,
+          document.getElementById('name').value.trim(),
+          document.getElementById('phone').value.trim()
+        );
+        alert('회원가입이 완료되었습니다! 이메일을 확인해주세요.');
+        window.location.href = 'login.html';
+      } catch (err) {
+        errEl.textContent = err.message || '회원가입 중 오류가 발생했습니다.';
+        errEl.style.display = 'block';
+        btn.textContent = '회원가입'; btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

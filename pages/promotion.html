@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promotion — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); }
+    .page-banner { background: var(--black); color: var(--white); padding: 80px 60px; text-align: center; }
+    .page-banner h1 { font-family: var(--font-en); font-size: 56px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
+    .page-banner p { font-size: 16px; color: rgba(255,255,255,0.6); }
+    .promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 64px 0; }
+    .promo-card { position: relative; overflow: hidden; border-radius: var(--radius-card); cursor: pointer; }
+    .promo-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .promo-card:hover img { transform: scale(1.05); }
+    .promo-card__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); }
+    .promo-card__text { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px; color: var(--white); }
+    .promo-card__tag { display: inline-block; background: var(--accent); font-family: var(--font-en); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px; }
+    .promo-card__title { font-family: var(--font-en); font-size: 20px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .promo-card__sub { font-size: 13px; color: rgba(255,255,255,0.8); }
+    @media(max-width:1024px) { .promo-grid { grid-template-columns: repeat(2, 1fr); } .page-banner { padding: 60px 32px; } .page-banner h1 { font-size: 40px; } }
+    @media(max-width:768px) { .promo-grid { grid-template-columns: 1fr; } .page-banner { padding: 48px 20px; } .page-banner h1 { font-size: 32px; } }
+  </style>
+</head>
+<body>
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
+      <nav class="header-nav" style="display:flex">
+        <div class="nav-item"><a href="product-list.html" style="color:var(--black)">Shop</a></div>
+        <div class="nav-item"><a href="promotion.html" style="color:var(--black);font-weight:700">Promotion</a></div>
+        <div class="nav-item"><a href="review.html" style="color:var(--black)">Review</a></div>
+      </nav>
+      <div class="header-icons">
+        <a href="cart.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a>
+        <a href="mypage.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-banner">
+    <h1>Promotion</h1>
+    <p>RIVANT의 특별 기획전과 이벤트를 만나보세요</p>
+  </div>
+
+  <main class="inner">
+    <div class="promo-grid">
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo1/800/600" alt="기획전 1" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">LIMITED</span>
+          <h2 class="promo-card__title">Summer Running Sale</h2>
+          <p class="promo-card__sub">러닝화 & 의류 최대 30% 할인</p>
+        </div>
+      </a>
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo2/800/600" alt="기획전 2" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">NEW</span>
+          <h2 class="promo-card__title">SS 2026 Launch</h2>
+          <p class="promo-card__sub">2026 봄여름 신상품 출시</p>
+        </div>
+      </a>
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo3/800/600" alt="기획전 3" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">COLLAB</span>
+          <h2 class="promo-card__title">Athletic × Street</h2>
+          <p class="promo-card__sub">스트리트 컬처와의 특별 협업</p>
+        </div>
+      </a>
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo4/800/600" alt="기획전 4" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">WOMEN</span>
+          <h2 class="promo-card__title">Women's Active</h2>
+          <p class="promo-card__sub">여성 액티브 라인 특가</p>
+        </div>
+      </a>
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo5/800/600" alt="기획전 5" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">ACC</span>
+          <h2 class="promo-card__title">Accessories Week</h2>
+          <p class="promo-card__sub">가방·모자·양말 20% 할인</p>
+        </div>
+      </a>
+      <a href="product-list.html" class="promo-card">
+        <img src="https://picsum.photos/seed/promo6/800/600" alt="기획전 6" loading="lazy" />
+        <div class="promo-card__overlay"></div>
+        <div class="promo-card__text">
+          <span class="promo-card__tag">MEMBER</span>
+          <h2 class="promo-card__title">Members Only</h2>
+          <p class="promo-card__sub">회원 전용 특별 할인 혜택</p>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

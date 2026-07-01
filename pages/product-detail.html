@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 상세 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); }
+    .breadcrumb { padding: 20px 0; font-size: 13px; color: var(--desc-text); display: flex; gap: 8px; align-items: center; }
+    .breadcrumb a { color: var(--desc-text); } .breadcrumb a:hover { color: var(--black); }
+    .breadcrumb span { color: var(--line); }
+    .detail-layout { display: grid; grid-template-columns: 1fr 480px; gap: 60px; padding-bottom: 80px; align-items: start; }
+    /* Image grid */
+    .detail-images { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .detail-images img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--radius-input); transition: transform var(--trans-slow); }
+    .detail-images img:hover { transform: scale(1.02); }
+    /* Info */
+    .detail-info { position: sticky; top: calc(var(--header-h) + 24px); }
+    .detail-wish { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .wish-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--desc-text); cursor: pointer; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-btn); transition: all var(--trans-fast); }
+    .wish-btn:hover, .wish-btn.active { border-color: var(--accent); color: var(--accent); }
+    .detail-name { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; }
+    .detail-summary { font-size: 14px; color: var(--desc-text); line-height: 1.7; margin-bottom: 20px; }
+    .detail-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 14px; color: var(--desc-text); }
+    .stars { color: #fbbf24; letter-spacing: 2px; }
+    .detail-price { padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+    .price-row { display: flex; align-items: center; justify-content: space-between; }
+    .detail-original { font-size: 16px; color: var(--desc-text); text-decoration: line-through; font-family: var(--font-en); }
+    .detail-sale { font-family: var(--font-en); font-size: 28px; font-weight: 800; color: var(--black); }
+    .detail-rate { background: var(--accent); color: var(--white); font-family: var(--font-en); font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+    /* Options */
+    .option-label { font-size: 13px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .color-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .color-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: border-color var(--trans-fast); position: relative; }
+    .color-btn.active, .color-btn:hover { border-color: var(--black); }
+    .color-btn::after { content:''; position:absolute; inset:3px; border-radius:50%; background: inherit; }
+    .size-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .size-btn { min-width: 56px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 14px; font-weight: 600; text-align: center; cursor: pointer; transition: all var(--trans-fast); font-family: var(--font-en); }
+    .size-btn:hover, .size-btn.active { border-color: var(--black); background: var(--black); color: var(--white); }
+    .size-btn.disabled { color: var(--line); cursor: not-allowed; border-color: var(--line); }
+    /* Selected options */
+    .selected-options { background: var(--bg-light); border-radius: var(--radius-input); padding: 16px; margin-bottom: 20px; min-height: 60px; }
+    .selected-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .selected-item:last-child { border-bottom: none; }
+    .selected-item-qty { display: flex; align-items: center; gap: 12px; }
+    .qty-ctrl { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .qty-ctrl button { width: 28px; height: 28px; font-size: 14px; cursor: pointer; }
+    .qty-ctrl span { width: 32px; text-align: center; font-size: 14px; font-weight: 600; }
+    /* Total */
+    .order-total { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 15px; font-weight: 600; }
+    .order-total-price { font-family: var(--font-en); font-size: 24px; font-weight: 800; color: var(--accent); }
+    .btn-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-actions .btn { justify-content: center; }
+    /* Tabs */
+    .detail-tabs { margin-top: 80px; }
+    .detail-tab-content { padding: 40px 0; }
+    .review-card { display: flex; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+    .review-card:last-child { border-bottom: none; }
+    .review-imgs { display: flex; gap: 8px; margin-top: 12px; }
+    .review-imgs img { width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-input); }
+    .qna-item { padding: 20px 0; border-bottom: 1px solid var(--line); }
+    .qna-item .q { font-weight: 600; margin-bottom: 8px; display: flex; gap: 8px; }
+    .qna-item .a { color: var(--desc-text); font-size: 14px; display: flex; gap: 8px; padding-left: 4px; }
+    @media(max-width:1024px) { .detail-layout { grid-template-columns: 1fr; } .detail-info { position: static; } .detail-images { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:768px) { .detail-images { grid-template-columns: 1fr; } .btn-actions { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
+      <nav class="header-nav" style="display:flex">
+        <div class="nav-item"><a href="product-list.html" style="color:var(--black)">Shop</a></div>
+        <div class="nav-item"><a href="promotion.html" style="color:var(--black)">Promotion</a></div>
+      </nav>
+      <div class="header-icons">
+        <a href="cart.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a>
+        <a href="mypage.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="inner">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a><span>›</span>
+      <a href="product-list.html">Shop</a><span>›</span>
+      <span style="color:var(--black)">Cloud Runner Pro</span>
+    </div>
+
+    <div class="detail-layout">
+      <!-- Images -->
+      <div class="detail-images">
+        <img src="https://picsum.photos/seed/det1/600/800" alt="상품 이미지 1" />
+        <img src="https://picsum.photos/seed/det2/600/800" alt="상품 이미지 2" />
+        <img src="https://picsum.photos/seed/det3/600/800" alt="상품 이미지 3" />
+        <img src="https://picsum.photos/seed/det4/600/800" alt="상품 이미지 4" />
+      </div>
+
+      <!-- Info -->
+      <div class="detail-info">
+        <div class="detail-wish">
+          <button class="wish-btn" id="wishBtn" onclick="this.classList.toggle('active')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            찜하기
+          </button>
+        </div>
+        <h1 class="detail-name">Cloud Runner Pro — 클라우드 러너 프로</h1>
+        <p class="detail-summary">초경량 쿠셔닝 기술로 설계된 프리미엄 러닝화. 장거리 러닝과 일상 착용 모두 최적화된 핏을 제공합니다.</p>
+        <div class="detail-rating">
+          <span class="stars">★★★★★</span>
+          <span>4.8 (238개 리뷰)</span>
+          <span>·</span>
+          <span>찜 1,800개</span>
+        </div>
+
+        <div class="detail-price">
+          <div class="price-row">
+            <div>
+              <div class="detail-original">159,000원</div>
+              <div class="detail-sale">127,200원</div>
+            </div>
+            <span class="detail-rate">20% OFF</span>
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div style="margin-bottom:20px">
+          <p class="option-label">Color — <span id="selectedColor">Black</span></p>
+          <div class="color-options">
+            <button class="color-btn active" style="background:#111111" onclick="selectColor(this,'Black')" title="Black"></button>
+            <button class="color-btn" style="background:#ffffff;border:1.5px solid #e8e8e8" onclick="selectColor(this,'White')" title="White"></button>
+            <button class="color-btn" style="background:#9ca3af" onclick="selectColor(this,'Gray')" title="Gray"></button>
+            <button class="color-btn" style="background:#ff5112" onclick="selectColor(this,'Orange')" title="Orange"></button>
+          </div>
+        </div>
+
+        <!-- Size -->
+        <div style="margin-bottom:24px">
+          <p class="option-label">Size</p>
+          <div class="size-options" id="sizeOptions">
+            <button class="size-btn" onclick="selectSize(this,'240')">240</button>
+            <button class="size-btn" onclick="selectSize(this,'245')">245</button>
+            <button class="size-btn" onclick="selectSize(this,'250')">250</button>
+            <button class="size-btn active" onclick="selectSize(this,'255')">255</button>
+            <button class="size-btn" onclick="selectSize(this,'260')">260</button>
+            <button class="size-btn" onclick="selectSize(this,'265')">265</button>
+            <button class="size-btn disabled">270</button>
+          </div>
+        </div>
+
+        <!-- Selected -->
+        <div class="selected-options" id="selectedOptions">
+          <p style="font-size:13px;color:var(--desc-text);text-align:center;padding:8px 0">색상과 사이즈를 선택해주세요</p>
+        </div>
+
+        <!-- Total -->
+        <div class="order-total">
+          <span>총 결제금액</span>
+          <span class="order-total-price" id="totalPrice">127,200원</span>
+        </div>
+
+        <div class="btn-actions">
+          <button class="btn btn-secondary" onclick="addToCart()">장바구니</button>
+          <button class="btn btn-primary" onclick="buyNow()">바로 구매</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="detail-tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="tab-info">상품정보</button>
+        <button class="tab-btn" data-tab="tab-review">리뷰 (238)</button>
+        <button class="tab-btn" data-tab="tab-qna">Q&amp;A (12)</button>
+      </div>
+
+      <div id="tab-info" class="detail-tab-content">
+        <div style="max-width:800px;margin:0 auto">
+          <img src="https://picsum.photos/seed/det-desc1/800/600" alt="상품 상세" style="width:100%;border-radius:var(--radius-img);margin-bottom:20px" loading="lazy" />
+          <img src="https://picsum.photos/seed/det-desc2/800/600" alt="상품 상세" style="width:100%;border-radius:var(--radius-img);margin-bottom:20px" loading="lazy" />
+          <table style="width:100%;border-collapse:collapse;font-size:14px">
+            <tr style="background:var(--bg-light)"><th style="padding:12px;text-align:left;border-bottom:1px solid var(--line);width:120px">소재</th><td style="padding:12px;border-bottom:1px solid var(--line)">상단: 메쉬 원단 70%, 폴리에스터 30%</td></tr>
+            <tr><th style="padding:12px;text-align:left;border-bottom:1px solid var(--line)">기능</th><td style="padding:12px;border-bottom:1px solid var(--line)">방수 코팅, 통기성 강화, 충격 흡수 미드솔</td></tr>
+            <tr style="background:var(--bg-light)"><th style="padding:12px;text-align:left;border-bottom:1px solid var(--line)">세탁방법</th><td style="padding:12px;border-bottom:1px solid var(--line)">손세탁 권장, 건조기 사용 불가</td></tr>
+            <tr><th style="padding:12px;text-align:left">원산지</th><td style="padding:12px">Made in Vietnam</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-review" class="detail-tab-content" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+          <div style="text-align:center">
+            <div style="font-family:var(--font-en);font-size:64px;font-weight:800;line-height:1">4.8</div>
+            <div style="color:#fbbf24;font-size:24px;letter-spacing:4px;margin:8px 0">★★★★★</div>
+            <div style="font-size:14px;color:var(--desc-text)">238개 리뷰 기준</div>
+          </div>
+          <button class="btn btn-secondary">리뷰 작성하기</button>
+        </div>
+        <div>
+          <div class="review-card">
+            <div style="flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:16px">👤</div></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-weight:600">김서윤</span><span style="color:#fbbf24">★★★★★</span><span style="font-size:12px;color:var(--desc-text)">2026.05.01</span></div>
+              <p style="font-size:14px;line-height:1.7;color:var(--sub-text)">정말 편합니다. 러닝할 때마다 발이 너무 편하고 디자인도 예뻐서 일상에서도 자주 신게 됐어요!</p>
+              <div class="review-imgs">
+                <img src="https://picsum.photos/seed/rv1/160/160" alt="리뷰 이미지" loading="lazy" />
+                <img src="https://picsum.photos/seed/rv2/160/160" alt="리뷰 이미지" loading="lazy" />
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div style="flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:16px">👤</div></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-weight:600">박지훈</span><span style="color:#fbbf24">★★★★☆</span><span style="font-size:12px;color:var(--desc-text)">2026.04.20</span></div>
+              <p style="font-size:14px;line-height:1.7;color:var(--sub-text)">쿠션감이 정말 좋습니다. 마라톤 훈련에 사용 중인데 장거리를 뛰어도 발이 편해요. 사이즈는 평소 사이즈로 구매하시면 됩니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-qna" class="detail-tab-content" style="display:none">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:24px">
+          <button class="btn btn-secondary btn-sm">상품 문의하기</button>
+        </div>
+        <div>
+          <div class="qna-item">
+            <div class="q"><span style="color:var(--accent);font-weight:700">Q</span> 260 사이즈 주문하면 270 발에도 맞을까요?</div>
+            <div class="a"><span style="color:var(--black);font-weight:700">A</span> 평소 신으시는 사이즈로 주문 권장드립니다. 260은 265-268 발에 적합합니다.</div>
+          </div>
+          <div class="qna-item">
+            <div class="q"><span style="color:var(--accent);font-weight:700">Q</span> 세탁 시 주의사항이 있나요?</div>
+            <div class="a"><span style="color:var(--black);font-weight:700">A</span> 손세탁을 권장하며 세탁기 사용 및 건조기 사용은 피해주세요. 그늘에서 건조하시면 됩니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const { Cart, fmtPrice, showToast } = RivantApp;
+    let selectedColor = 'Black', selectedSize = '255', qty = 1;
+    const BASE_PRICE = 127200;
+
+    function selectColor(btn, color) {
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedColor = color;
+      document.getElementById('selectedColor').textContent = color;
+      updateSelected();
+    }
+
+    function selectSize(btn, size) {
+      if (btn.classList.contains('disabled')) return;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSize = size;
+      updateSelected();
+    }
+
+    function updateSelected() {
+      const el = document.getElementById('selectedOptions');
+      el.innerHTML = `
+        <div class="selected-item">
+          <span style="font-size:14px">${selectedColor} / ${selectedSize}mm</span>
+          <div class="selected-item-qty">
+            <div class="qty-ctrl">
+              <button onclick="changeQty(-1)">−</button>
+              <span id="qtyDisplay">${qty}</span>
+              <button onclick="changeQty(1)">+</button>
+            </div>
+            <span style="font-family:var(--font-en);font-weight:700;font-size:15px">${fmtPrice(BASE_PRICE * qty)}</span>
+          </div>
+        </div>`;
+      document.getElementById('totalPrice').textContent = fmtPrice(BASE_PRICE * qty);
+    }
+
+    function changeQty(delta) {
+      qty = Math.max(1, qty + delta);
+      updateSelected();
+    }
+
+    function addToCart() {
+      Cart.add({ sku: `runner-${selectedColor}-${selectedSize}`, name: 'Cloud Runner Pro', option: `${selectedColor} / ${selectedSize}mm`, price: 159000, salePrice: BASE_PRICE, qty, image: 'https://picsum.photos/seed/det1/400/500' });
+      showToast('장바구니에 담았습니다!');
+    }
+
+    function buyNow() { addToCart(); window.location.href = 'cart.html'; }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.detail-tab-content').forEach(p => p.style.display = 'none');
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).style.display = 'block';
+      });
+    });
+
+    updateSelected();
+  </script>
+</body>
+</html>

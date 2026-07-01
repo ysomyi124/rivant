@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 목록 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); }
+    .cat-banner { background: var(--black); color: var(--white); padding: 60px; text-align: center; }
+    .cat-banner h1 { font-family: var(--font-en); font-size: 48px; font-weight: 800; text-transform: uppercase; }
+    .sub-cats { display: flex; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--line); padding: 0 60px; background: var(--white); }
+    .sub-cat { padding: 16px 20px; font-family: var(--font-en); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--desc-text); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color var(--trans-fast), border-color var(--trans-fast); }
+    .sub-cat.active, .sub-cat:hover { color: var(--black); border-color: var(--black); }
+    .list-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; }
+    .list-count { font-size: 14px; color: var(--desc-text); }
+    .list-sort { padding: 10px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 14px; cursor: pointer; background: var(--white); color: var(--black); font-family: var(--font-ko); }
+    .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px 20px; padding-bottom: 80px; }
+    @media(max-width:1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } .cat-banner { padding: 40px 32px; } .cat-banner h1 { font-size: 36px; } .sub-cats { padding: 0 32px; } }
+    @media(max-width:768px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 12px; } .cat-banner { padding: 32px 20px; } .cat-banner h1 { font-size: 28px; } .sub-cats { padding: 0 20px; } .list-toolbar { padding: 16px 0; } }
+  </style>
+</head>
+<body>
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
+      <nav class="header-nav" style="display:flex">
+        <div class="nav-item"><a href="product-list.html?cat=men" style="color:var(--black)">Men</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=women" style="color:var(--black)">Women</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes" style="color:var(--black)">Shoes</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=acc" style="color:var(--black)">ACC</a></div>
+        <div class="nav-item"><a href="promotion.html" style="color:var(--black)">Promotion</a></div>
+      </nav>
+      <div class="header-icons">
+        <a href="cart.html" class="icon-btn" style="color:var(--black)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <a href="mypage.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="cat-banner">
+    <h1 id="catTitle">All Products</h1>
+  </div>
+
+  <div class="sub-cats" id="subCats"></div>
+
+  <main class="inner">
+    <div class="list-toolbar">
+      <p class="list-count">총 <strong id="prodCount">24</strong>개 상품</p>
+      <select class="list-sort" onchange="sortProducts(this.value)">
+        <option value="new">신상품순</option>
+        <option value="popular">인기상품순</option>
+        <option value="low">낮은가격순</option>
+        <option value="high">높은가격순</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('cat') || 'all';
+
+    const catMap = {
+      men: { title: 'Men', subs: ['All Item','T-Shirts','Knit','Pants','Outer','Cap','Bag','Shoes','Socks','ACC'] },
+      women: { title: 'Women', subs: ['All Item','T-Shirts','Knit','Pants','Skirt','Outer','Cap','Bag','Shoes','Socks','ACC'] },
+      shoes: { title: 'Shoes', subs: ['All Item','Running','Training','Lifestyle','Outdoor'] },
+      acc: { title: 'ACC', subs: ['All Item','Bag','Cap','Socks','Accessories'] },
+      all: { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'] },
+    };
+
+    const info = catMap[cat] || catMap.all;
+    document.getElementById('catTitle').textContent = info.title;
+
+    const subCats = document.getElementById('subCats');
+    subCats.innerHTML = info.subs.map((s, i) =>
+      `<span class="sub-cat ${i===0?'active':''}" onclick="this.parentElement.querySelectorAll('.sub-cat').forEach(el=>el.classList.remove('active'));this.classList.add('active')">${s}</span>`
+    ).join('');
+
+    const products = Array.from({length: 12}, (_, i) => ({
+      id: i + 1,
+      name: ['Cloud Runner Pro','Motion Flex Tee','AeroLite Shorts','Speed Cap','Slim Track Pants','Rivant Hoodie','Sport Backpack','Compression Socks','Wind Jacket','Active Crop Top','Ultra Boost','Essential Cap'][i],
+      price: [159000,49000,59000,35000,89000,99000,79000,22000,159000,39000,139000,35000][i],
+      salePrice: [127200,34300,47200,28000,71200,79200,63200,15400,127200,31200,111200,28000][i],
+      rate: 20,
+      seed: `pl${i+1}`,
+    }));
+
+    function renderProducts(list) {
+      document.getElementById('prodCount').textContent = list.length;
+      document.getElementById('productGrid').innerHTML = list.map(p => `
+        <a href="product-detail.html?id=${p.id}" class="product-card">
+          <div class="product-card__img">
+            <img src="https://picsum.photos/seed/${p.seed}/400/500" alt="${p.name}" class="img-main" loading="lazy" />
+            <img src="https://picsum.photos/seed/${p.seed}b/400/500" alt="" class="img-hover" loading="lazy" />
+            <span class="product-card__badge">${p.rate}%</span>
+            <button class="product-card__wish" onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <div class="product-card__info">
+            <p class="product-card__name">${p.name}</p>
+            <div class="product-card__price">
+              <span class="price-original">${p.price.toLocaleString()}원</span>
+              <span class="price-sale">${p.salePrice.toLocaleString()}원</span>
+              <span class="price-rate">${p.rate}%</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    function sortProducts(val) {
+      const sorted = [...products];
+      if (val === 'low') sorted.sort((a,b) => a.salePrice - b.salePrice);
+      else if (val === 'high') sorted.sort((a,b) => b.salePrice - a.salePrice);
+      else if (val === 'popular') sorted.sort(() => Math.random() - 0.5);
+      renderProducts(sorted);
+    }
+
+    renderProducts(products);
+  </script>
+</body>
+</html>

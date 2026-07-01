@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마이페이지 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); background: var(--bg-light); }
+    .mypage-layout { display: grid; grid-template-columns: 240px 1fr; gap: 32px; padding: 48px 0 80px; align-items: start; }
+    /* Sidebar */
+    .mypage-sidebar { background: var(--white); border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow); }
+    .sidebar-profile { padding: 32px 24px; text-align: center; background: var(--black); color: var(--white); }
+    .sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 28px; }
+    .sidebar-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .sidebar-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+    .sidebar-nav a { display: block; padding: 14px 24px; font-size: 14px; font-weight: 500; color: var(--sub-text); border-bottom: 1px solid var(--line); transition: all var(--trans-fast); }
+    .sidebar-nav a:last-child { border-bottom: none; }
+    .sidebar-nav a:hover, .sidebar-nav a.active { color: var(--black); background: var(--bg-light); font-weight: 600; }
+    .sidebar-nav a.active { border-left: 3px solid var(--accent); padding-left: 21px; }
+    /* Content */
+    .mypage-content { display: flex; flex-direction: column; gap: 24px; }
+    .my-card { background: var(--white); border-radius: var(--radius-card); padding: 32px; box-shadow: var(--shadow); }
+    .my-card-title { font-family: var(--font-en); font-size: 16px; font-weight: 700; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .my-card-title a { font-size: 12px; color: var(--desc-text); font-weight: 500; text-transform: none; font-family: var(--font-ko); }
+    /* Stats */
+    .my-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .stat-item { text-align: center; padding: 20px 12px; background: var(--bg-light); border-radius: var(--radius-input); }
+    .stat-num { font-family: var(--font-en); font-size: 28px; font-weight: 800; color: var(--black); }
+    .stat-label { font-size: 12px; color: var(--desc-text); margin-top: 4px; }
+    /* Order list */
+    .order-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .order-item:last-child { border-bottom: none; }
+    .order-item img { width: 72px; height: 90px; object-fit: cover; border-radius: var(--radius-input); background: var(--bg-light); }
+    .order-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .order-option { font-size: 12px; color: var(--desc-text); }
+    .order-price { font-family: var(--font-en); font-weight: 700; font-size: 15px; }
+    .order-status { font-size: 12px; color: var(--desc-text); margin-top: 4px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: var(--radius-btn); font-size: 11px; font-weight: 700; font-family: var(--font-en); }
+    .status-complete { background: rgba(56,161,105,0.1); color: #38a169; }
+    .status-shipping { background: rgba(49,130,206,0.1); color: #3182ce; }
+    .status-pending { background: rgba(237,137,54,0.1); color: #dd6b20; }
+    @media(max-width:1024px) { .mypage-layout { grid-template-columns: 1fr; } .mypage-sidebar { display: none; } }
+    @media(max-width:768px) { .my-stats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
+      <div class="header-icons">
+        <a href="cart.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a>
+        <button class="btn btn-secondary btn-sm" onclick="RivantApp.Auth.signOut()">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="inner">
+    <div class="mypage-layout">
+      <!-- Sidebar -->
+      <aside class="mypage-sidebar">
+        <div class="sidebar-profile">
+          <div class="sidebar-avatar">👤</div>
+          <p class="sidebar-name" id="userName">회원님</p>
+          <p class="sidebar-email" id="userEmail">-</p>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#" class="active">회원정보</a>
+          <a href="#">주문내역</a>
+          <a href="#">배송조회</a>
+          <a href="#">찜한 상품</a>
+          <a href="#">최근 본 상품</a>
+          <a href="#">리뷰 관리</a>
+          <a href="#">상품 문의</a>
+          <a href="#">배송지 관리</a>
+          <a href="#">개인정보 수정</a>
+          <a href="#">비밀번호 변경</a>
+          <a href="#" style="color:#e53e3e">회원탈퇴</a>
+        </nav>
+      </aside>
+
+      <!-- Content -->
+      <div class="mypage-content">
+        <!-- Stats -->
+        <div class="my-card">
+          <h2 class="my-card-title">My Activity</h2>
+          <div class="my-stats">
+            <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">총 주문</div></div>
+            <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">찜한 상품</div></div>
+            <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">작성 리뷰</div></div>
+            <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">포인트</div></div>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="my-card">
+          <h2 class="my-card-title">최근 주문내역 <a href="#">전체보기</a></h2>
+          <div class="order-item">
+            <img src="https://picsum.photos/seed/det1/144/180" alt="상품" loading="lazy" />
+            <div>
+              <p class="order-name">Cloud Runner Pro</p>
+              <p class="order-option">Black / 255mm · 1개</p>
+              <p class="order-price">127,200원</p>
+            </div>
+            <div style="text-align:right">
+              <span class="status-badge status-complete">배송완료</span>
+              <p class="order-status" style="margin-top:8px">2026.05.15</p>
+            </div>
+          </div>
+          <div class="order-item">
+            <img src="https://picsum.photos/seed/new1/144/180" alt="상품" loading="lazy" />
+            <div>
+              <p class="order-name">Motion Flex Training Tee</p>
+              <p class="order-option">White / M · 2개</p>
+              <p class="order-price">68,600원</p>
+            </div>
+            <div style="text-align:right">
+              <span class="status-badge status-shipping">배송중</span>
+              <p class="order-status" style="margin-top:8px">2026.06.01</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="my-card">
+          <h2 class="my-card-title">찜한 상품 <a href="#">전체보기</a></h2>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+            <a href="product-detail.html" class="product-card">
+              <div class="product-card__img" style="border-radius:var(--radius-input)"><img src="https://picsum.photos/seed/bs1/300/375" alt="" loading="lazy" /></div>
+              <div class="product-card__info"><p class="product-card__name" style="font-size:13px">Cloud Runner Pro</p><div class="product-card__price"><span class="price-sale" style="font-size:13px">127,200원</span></div></div>
+            </a>
+            <a href="product-detail.html" class="product-card">
+              <div class="product-card__img" style="border-radius:var(--radius-input)"><img src="https://picsum.photos/seed/new3/300/375" alt="" loading="lazy" /></div>
+              <div class="product-card__info"><p class="product-card__name" style="font-size:13px">Ultra Light Knit Jacket</p><div class="product-card__price"><span class="price-sale" style="font-size:13px">90,300원</span></div></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    (async () => {
+      const user = await RivantApp.Auth.getUser();
+      if (user) {
+        document.getElementById('userName').textContent = user.user_metadata?.name || '회원님';
+        document.getElementById('userEmail').textContent = user.email || '';
+      }
+      document.querySelector('.cart-badge') && (document.querySelector('.cart-badge').style.display = RivantApp.Cart.count() ? 'flex' : 'none');
+      if (document.querySelector('.cart-badge')) document.querySelector('.cart-badge').textContent = RivantApp.Cart.count();
+    })();
+  </script>
+</body>
+</html>

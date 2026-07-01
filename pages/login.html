@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body { font-family: var(--font-ko); background: var(--bg-light); display: flex; flex-direction: column; min-height: 100vh; }
+    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
+    .auth-box { background: var(--white); border-radius: var(--radius-card); padding: 56px 48px; width: 100%; max-width: 480px; box-shadow: var(--shadow); }
+    .auth-logo { text-align: center; margin-bottom: 40px; }
+    .auth-logo img { height: 28px; margin: 0 auto; }
+    .auth-title { font-family: var(--font-en); font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; text-transform: uppercase; }
+    .auth-sub { text-align: center; font-size: 14px; color: var(--desc-text); margin-bottom: 36px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--sub-text); }
+    .form-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 15px; color: var(--black); transition: border-color var(--trans-fast); }
+    .form-input:focus { border-color: var(--black); }
+    .form-input::placeholder { color: var(--desc-text); }
+    .form-forgot { display: flex; justify-content: flex-end; margin-top: 8px; }
+    .form-forgot a { font-size: 12px; color: var(--desc-text); text-decoration: underline; }
+    .form-forgot a:hover { color: var(--black); }
+    .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
+    .divider { display: flex; align-items: center; gap: 16px; margin: 28px 0; color: var(--desc-text); font-size: 12px; }
+    .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--line); }
+    .social-login { display: flex; flex-direction: column; gap: 10px; }
+    .social-btn-login { width: 100%; padding: 13px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-input); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--trans-fast); background: var(--white); }
+    .social-btn-login:hover { border-color: var(--black); background: var(--bg-light); }
+    .auth-footer { text-align: center; margin-top: 32px; font-size: 14px; color: var(--desc-text); }
+    .auth-footer a { color: var(--black); font-weight: 700; }
+    .error-msg { color: #e53e3e; font-size: 13px; margin-top: 6px; display: none; }
+    .error-msg.show { display: block; }
+    @media(max-width:480px) { .auth-box { padding: 36px 24px; } }
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" /></a>
+      </div>
+      <h1 class="auth-title">Sign In</h1>
+      <p class="auth-sub">RIVANT 회원이라면 로그인하세요</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">이메일</label>
+          <input type="email" id="email" class="form-input" placeholder="이메일을 입력하세요" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">비밀번호</label>
+          <input type="password" id="password" class="form-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password" />
+          <div class="form-forgot"><a href="#">아이디/비밀번호 찾기</a></div>
+        </div>
+        <p class="error-msg" id="errorMsg"></p>
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">로그인</button>
+      </form>
+
+      <div class="divider">또는</div>
+      <div class="social-login">
+        <button class="social-btn-login" onclick="alert('소셜 로그인 준비 중입니다.')">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#FEE500" d="M12 2C6.48 2 2 5.92 2 10.76c0 3.12 1.84 5.88 4.62 7.5L5.5 22l4.5-2.5c.65.1 1.32.15 2 .15 5.52 0 10-3.92 10-8.74S17.52 2 12 2z"/></svg>
+          카카오로 로그인
+        </button>
+        <button class="social-btn-login" onclick="alert('소셜 로그인 준비 중입니다.')">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#03C75A" d="M12 2C6.48 2 2 5.92 2 10.76c0 3.12 1.84 5.88 4.62 7.5L5.5 22l4.5-2.5c.65.1 1.32.15 2 .15 5.52 0 10-3.92 10-8.74S17.52 2 12 2z"/></svg>
+          네이버로 로그인
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        아직 회원이 아니신가요? <a href="signup.html">회원가입</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const loginBtn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove('show');
+      loginBtn.textContent = '로그인 중...';
+      loginBtn.disabled = true;
+
+      try {
+        await RivantApp.Auth.signIn(
+          document.getElementById('email').value.trim(),
+          document.getElementById('password').value
+        );
+        window.location.href = '../index.html';
+      } catch (err) {
+        errorMsg.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        errorMsg.classList.add('show');
+        loginBtn.textContent = '로그인';
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIVANT — Move Beyond Style</title>
+  <meta name="description" content="끊임없이 도전하며 새로운 스타일을 선도하는 프리미엄 스포츠 패션 브랜드 RIVANT" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/sections.css" />
+  <link rel="stylesheet" href="css/footer.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+<!-- Page Transition -->
+<div class="page-transition"></div>
+
+<!-- Overlay BG -->
+<div class="overlay-bg"></div>
+
+<!-- ==============================
+     QUICK MENU
+============================== -->
+<div class="quick-menu">
+  <button class="quick-btn btn-consult" title="상담하기" onclick="window.open('mailto:help@rivant.com')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span style="font-size:9px;line-height:1">상담</span>
+  </button>
+  <button class="quick-btn btn-top" title="맨 위로" aria-label="맨 위로 이동">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+</div>
+
+<!-- ==============================
+     HEADER
+============================== -->
+<header id="header" class="transparent">
+  <div class="header-inner">
+    <!-- Logo -->
+    <a href="index.html" class="header-logo">
+      <img src="images/logo_w.png" alt="RIVANT" class="logo-white" />
+      <img src="images/logo_b.png" alt="RIVANT" class="logo-black" />
+    </a>
+
+    <!-- Navigation -->
+    <nav class="header-nav">
+      <!-- Men -->
+      <div class="nav-item has-mega">
+        <a href="pages/product-list.html?cat=men">Men</a>
+        <div class="mega-menu">
+          <div class="mega-links">
+            <a href="pages/product-list.html?cat=men" class="all-item">All Item →</a>
+            <a href="pages/product-list.html?cat=men&sub=tshirts">T-Shirts</a>
+            <a href="pages/product-list.html?cat=men&sub=knit">Knit</a>
+            <a href="pages/product-list.html?cat=men&sub=pants">Pants</a>
+            <a href="pages/product-list.html?cat=men&sub=outer">Outer</a>
+            <a href="pages/product-list.html?cat=men&sub=cap">Cap</a>
+            <a href="pages/product-list.html?cat=men&sub=bag">Bag</a>
+            <a href="pages/product-list.html?cat=men&sub=shoes">Shoes</a>
+            <a href="pages/product-list.html?cat=men&sub=socks">Socks</a>
+            <a href="pages/product-list.html?cat=men&sub=acc">ACC</a>
+          </div>
+          <div class="mega-promos">
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-men1/360/480" alt="Men Promo 1" loading="lazy" />
+              <span>SS 2026 Collection</span>
+            </div>
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-men2/360/480" alt="Men Promo 2" loading="lazy" />
+              <span>New Arrivals</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Women -->
+      <div class="nav-item has-mega">
+        <a href="pages/product-list.html?cat=women">Women</a>
+        <div class="mega-menu">
+          <div class="mega-links">
+            <a href="pages/product-list.html?cat=women" class="all-item">All Item →</a>
+            <a href="pages/product-list.html?cat=women&sub=tshirts">T-Shirts</a>
+            <a href="pages/product-list.html?cat=women&sub=knit">Knit</a>
+            <a href="pages/product-list.html?cat=women&sub=pants">Pants</a>
+            <a href="pages/product-list.html?cat=women&sub=skirt">Skirt</a>
+            <a href="pages/product-list.html?cat=women&sub=outer">Outer</a>
+            <a href="pages/product-list.html?cat=women&sub=cap">Cap</a>
+            <a href="pages/product-list.html?cat=women&sub=bag">Bag</a>
+            <a href="pages/product-list.html?cat=women&sub=shoes">Shoes</a>
+            <a href="pages/product-list.html?cat=women&sub=socks">Socks</a>
+            <a href="pages/product-list.html?cat=women&sub=acc">ACC</a>
+          </div>
+          <div class="mega-promos">
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-women1/360/480" alt="Women Promo 1" loading="lazy" />
+              <span>SS 2026 Collection</span>
+            </div>
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-women2/360/480" alt="Women Promo 2" loading="lazy" />
+              <span>Active Wear</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Shoes -->
+      <div class="nav-item">
+        <a href="pages/product-list.html?cat=shoes">Shoes</a>
+      </div>
+      <!-- ACC -->
+      <div class="nav-item has-mega">
+        <a href="pages/product-list.html?cat=acc">ACC</a>
+        <div class="mega-menu">
+          <div class="mega-links">
+            <a href="pages/product-list.html?cat=acc" class="all-item">All Item →</a>
+            <a href="pages/product-list.html?cat=acc&sub=bag">Bag</a>
+            <a href="pages/product-list.html?cat=acc&sub=cap">Cap</a>
+            <a href="pages/product-list.html?cat=acc&sub=socks">Socks</a>
+            <a href="pages/product-list.html?cat=acc&sub=accessories">Accessories</a>
+          </div>
+          <div class="mega-promos">
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-acc1/360/480" alt="ACC Promo 1" loading="lazy" />
+              <span>ACC Campaign</span>
+            </div>
+            <div class="mega-promo-item">
+              <img src="https://picsum.photos/seed/mega-acc2/360/480" alt="ACC Promo 2" loading="lazy" />
+              <span>Best Picks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Promotion -->
+      <div class="nav-item">
+        <a href="pages/promotion.html">Promotion</a>
+      </div>
+      <!-- Review -->
+      <div class="nav-item">
+        <a href="pages/review.html">Review</a>
+      </div>
+    </nav>
+
+    <!-- Right Icons -->
+    <div class="header-icons">
+      <button class="icon-btn" id="searchOpen" aria-label="검색">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <a href="pages/cart.html" class="icon-btn" aria-label="장바구니">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-badge" style="display:none">0</span>
+      </a>
+      <a href="pages/mypage.html" class="icon-btn" aria-label="마이페이지">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <!-- Mobile Menu -->
+      <button class="mobile-menu-btn" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" role="dialog" aria-label="검색">
+    <div class="search-overlay-header">
+      <a href="index.html" class="header-logo">
+        <img src="images/logo_b.png" alt="RIVANT" style="height:24px" />
+      </a>
+      <button class="search-close" aria-label="닫기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="search-body">
+      <div class="search-input-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" placeholder="검색어를 입력하세요" autocomplete="off" />
+      </div>
+      <div class="search-keywords">
+        <h4>인기 검색어</h4>
+        <div class="keyword-list">
+          <span class="keyword-tag">러닝화</span>
+          <span class="keyword-tag">레깅스</span>
+          <span class="keyword-tag">트레이닝 팬츠</span>
+          <span class="keyword-tag">스포츠 브라</span>
+          <span class="keyword-tag">백팩</span>
+          <span class="keyword-tag">퀵드라이 티셔츠</span>
+          <span class="keyword-tag">캡모자</span>
+          <span class="keyword-tag">압박 양말</span>
+        </div>
+      </div>
+      <div class="search-recommend">
+        <h4>추천 상품</h4>
+        <div class="search-products">
+          <div class="product-card">
+            <div class="product-card__img"><img src="https://picsum.photos/seed/sp1/300/375" alt="추천상품" loading="lazy" /></div>
+            <div class="product-card__info">
+              <p class="product-card__name">Performance Run Shorts</p>
+              <div class="product-card__price"><span class="price-sale">59,000원</span></div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__img"><img src="https://picsum.photos/seed/sp2/300/375" alt="추천상품" loading="lazy" /></div>
+            <div class="product-card__info">
+              <p class="product-card__name">Active Mesh Cap</p>
+              <div class="product-card__price"><span class="price-sale">39,000원</span></div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__img"><img src="https://picsum.photos/seed/sp3/300/375" alt="추천상품" loading="lazy" /></div>
+            <div class="product-card__info">
+              <p class="product-card__name">Cloud Runner Shoes</p>
+              <div class="product-card__price"><span class="price-sale">129,000원</span></div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__img"><img src="https://picsum.photos/seed/sp4/300/375" alt="추천상품" loading="lazy" /></div>
+            <div class="product-card__info">
+              <p class="product-card__name">Training Zip-Up</p>
+              <div class="product-card__price"><span class="price-sale">89,000원</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav" aria-label="모바일 메뉴">
+  <div class="mobile-nav-header">
+    <a href="index.html"><img src="images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+    <button class="mobile-nav-close search-close" aria-label="메뉴 닫기">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav-body">
+    <div class="mobile-nav-item">
+      <a href="pages/product-list.html?cat=men">Men <span class="toggle-icon" style="transition:transform 0.2s">▾</span></a>
+      <div class="mobile-sub">
+        <a href="pages/product-list.html?cat=men">All Item</a>
+        <a href="#">T-Shirts</a><a href="#">Knit</a><a href="#">Pants</a>
+        <a href="#">Outer</a><a href="#">Cap</a><a href="#">Bag</a>
+        <a href="#">Shoes</a><a href="#">Socks</a><a href="#">ACC</a>
+      </div>
+    </div>
+    <div class="mobile-nav-item">
+      <a href="pages/product-list.html?cat=women">Women <span class="toggle-icon" style="transition:transform 0.2s">▾</span></a>
+      <div class="mobile-sub">
+        <a href="pages/product-list.html?cat=women">All Item</a>
+        <a href="#">T-Shirts</a><a href="#">Knit</a><a href="#">Pants</a>
+        <a href="#">Skirt</a><a href="#">Outer</a><a href="#">Cap</a>
+        <a href="#">Bag</a><a href="#">Shoes</a><a href="#">Socks</a><a href="#">ACC</a>
+      </div>
+    </div>
+    <div class="mobile-nav-item"><a href="pages/product-list.html?cat=shoes">Shoes</a></div>
+    <div class="mobile-nav-item">
+      <a href="pages/product-list.html?cat=acc">ACC <span class="toggle-icon" style="transition:transform 0.2s">▾</span></a>
+      <div class="mobile-sub">
+        <a href="#">Bag</a><a href="#">Cap</a><a href="#">Socks</a><a href="#">Accessories</a>
+      </div>
+    </div>
+    <div class="mobile-nav-item"><a href="pages/promotion.html">Promotion</a></div>
+    <div class="mobile-nav-item"><a href="pages/review.html">Review</a></div>
+  </div>
+  <div class="mobile-nav-icons">
+    <a href="pages/login.html" class="btn btn-secondary btn-sm">로그인</a>
+    <a href="pages/signup.html" class="btn btn-primary btn-sm">회원가입</a>
+  </div>
+</nav>
+
+<!-- ==============================
+     HERO
+============================== -->
+<section class="hero">
+  <div class="hero__bg">
+    <picture>
+      <source media="(max-width: 768px)" srcset="images/main_m.jpg" />
+      <img src="images/main_pc.jpg" alt="RIVANT Hero" />
+    </picture>
+  </div>
+  <div class="hero__overlay"></div>
+  <div class="hero__content">
+    <p class="hero__sub"><span>— 2026 Spring / Summer</span></p>
+    <h1 class="hero__title">
+      <span>Move</span>
+      <span>Beyond Style</span>
+    </h1>
+    <p class="hero__desc">끊임없이 도전하며 새로운 스타일을 선도하는 브랜드</p>
+    <div class="hero__actions">
+      <a href="pages/product-list.html" class="btn btn-white btn-lg">Shop Now</a>
+      <a href="pages/promotion.html" class="btn btn-secondary btn-lg" style="border-color:rgba(255,255,255,0.5);color:#fff;background:transparent">Promotion</a>
+    </div>
+  </div>
+  <div class="hero__scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 01 — CATEGORY
+============================== -->
+<section class="section section-category">
+  <div class="inner">
+    <div class="section-head">
+      <h2 class="section-title reveal">Category</h2>
+      <a href="pages/product-list.html" class="btn btn-secondary btn-sm reveal reveal-delay-1">View All</a>
+    </div>
+    <div class="category-grid reveal reveal-delay-1">
+      <a href="pages/product-list.html?cat=men" class="category-card">
+        <img src="https://picsum.photos/seed/cat-men/600/750" alt="Men" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Men
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=women" class="category-card">
+        <img src="https://picsum.photos/seed/cat-women/600/750" alt="Women" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Women
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=shoes" class="category-card">
+        <img src="https://picsum.photos/seed/cat-shoes/600/750" alt="Shoes" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Shoes
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=acc" class="category-card">
+        <img src="https://picsum.photos/seed/cat-acc/600/750" alt="ACC" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">ACC
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=running" class="category-card">
+        <img src="https://picsum.photos/seed/cat-run/600/750" alt="Running" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Running
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=training" class="category-card">
+        <img src="https://picsum.photos/seed/cat-train/600/750" alt="Training" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Training
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/product-list.html?cat=outdoor" class="category-card">
+        <img src="https://picsum.photos/seed/cat-out/600/750" alt="Outdoor" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">Outdoor
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+      <a href="pages/promotion.html" class="category-card">
+        <img src="https://picsum.photos/seed/cat-sale/600/750" alt="SALE" loading="lazy" />
+        <div class="category-card__overlay"></div>
+        <div class="category-card__name">SALE
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 02 — NEW
+============================== -->
+<section class="section section-new">
+  <div class="inner">
+    <!-- Left promo image -->
+    <div class="new-promo-img reveal">
+      <img src="https://picsum.photos/seed/new-promo/760/960" alt="NEW Collection" loading="lazy" />
+    </div>
+    <!-- Right swiper -->
+    <div class="new-right">
+      <div class="new-header reveal">
+        <span class="flash-title">New Arrivals</span>
+        <h2 class="section-title">지금 이 순간,<br/>새로운 스타일</h2>
+        <p>RIVANT의 최신 컬렉션을 만나보세요.<br />기능성과 스타일을 동시에 담았습니다.</p>
+      </div>
+      <!-- Swiper -->
+      <div class="swiper new-swiper">
+        <div class="swiper-wrapper">
+          <!-- Product cards -->
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new1/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new1b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Motion Flex Training Tee</p><div class="product-card__price"><span class="price-original">49,000원</span><span class="price-sale">34,300원</span><span class="price-rate">30%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new2/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new2b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">AeroLite Running Shorts</p><div class="product-card__price"><span class="price-original">59,000원</span><span class="price-sale">47,200원</span><span class="price-rate">20%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new3/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new3b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Ultra Light Knit Jacket</p><div class="product-card__price"><span class="price-original">129,000원</span><span class="price-sale">90,300원</span><span class="price-rate">30%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new4/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new4b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Speed Mesh Cap</p><div class="product-card__price"><span class="price-original">35,000원</span><span class="price-sale">28,000원</span><span class="price-rate">20%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new5/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new5b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Flex Training Pants</p><div class="product-card__price"><span class="price-original">89,000원</span><span class="price-sale">71,200원</span><span class="price-rate">20%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new6/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new6b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Rivant Sport Bag</p><div class="product-card__price"><span class="price-original">79,000원</span><span class="price-sale">63,200원</span><span class="price-rate">20%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new7/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new7b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Active Zip Hoodie</p><div class="product-card__price"><span class="price-original">99,000원</span><span class="price-sale">69,300원</span><span class="price-rate">30%</span></div></div>
+          </div></div>
+          <div class="swiper-slide"><div class="product-card">
+            <div class="product-card__img">
+              <img src="https://picsum.photos/seed/new8/400/500" alt="상품" class="img-main" loading="lazy" />
+              <img src="https://picsum.photos/seed/new8b/400/500" alt="상품 hover" class="img-hover" loading="lazy" />
+              <span class="product-card__badge">NEW</span>
+              <button class="product-card__wish" aria-label="찜하기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            </div>
+            <div class="product-card__info"><p class="product-card__name">Performance Socks 3P</p><div class="product-card__price"><span class="price-original">22,000원</span><span class="price-sale">15,400원</span><span class="price-rate">30%</span></div></div>
+          </div></div>
+        </div>
+      </div>
+      <div class="swiper-progressbar-custom new-progressbar">
+        <div class="swiper-progressbar-fill"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 03 — BEST ITEMS
+============================== -->
+<section class="section section-best">
+  <div class="inner">
+    <div class="section-head">
+      <h2 class="section-title reveal">Best Items</h2>
+      <a href="pages/product-list.html" class="btn btn-secondary btn-sm reveal reveal-delay-1">View All</a>
+    </div>
+    <div class="tab-list reveal">
+      <button class="tab-btn active" data-tab="best-shoes">Shoes</button>
+      <button class="tab-btn" data-tab="best-clothing">Clothing</button>
+      <button class="tab-btn" data-tab="best-acc">ACC</button>
+      <button class="tab-btn" data-tab="best-sports">Sports</button>
+    </div>
+
+    <!-- Shoes Panel -->
+    <div id="best-shoes" class="best-tab-panel">
+      <div class="best-swiper-wrap">
+        <div class="swiper best-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bs1/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bs1b/400/500" alt="" class="img-hover" loading="lazy" /><span class="product-card__badge">BEST</span><button class="product-card__wish" aria-label="찜"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="product-card__info"><p class="product-card__name">Cloud Runner Pro</p><div class="product-card__price"><span class="price-original">159,000원</span><span class="price-sale">127,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bs2/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bs2b/400/500" alt="" class="img-hover" loading="lazy" /><span class="product-card__badge">BEST</span><button class="product-card__wish" aria-label="찜"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="product-card__info"><p class="product-card__name">Ultra Boost Trainer</p><div class="product-card__price"><span class="price-original">139,000원</span><span class="price-sale">111,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bs3/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bs3b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Flex Street Low</p><div class="product-card__price"><span class="price-original">109,000원</span><span class="price-sale">87,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bs4/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bs4b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Speed Grip Outdoor</p><div class="product-card__price"><span class="price-original">149,000원</span><span class="price-sale">119,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bs5/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bs5b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">AeroFit Slip-On</p><div class="product-card__price"><span class="price-original">99,000원</span><span class="price-sale">79,200원</span><span class="price-rate">20%</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-progressbar-custom best-progressbar"><div class="swiper-progressbar-fill"></div></div>
+    </div>
+
+    <!-- Clothing Panel -->
+    <div id="best-clothing" class="best-tab-panel" style="display:none">
+      <div class="best-swiper-wrap">
+        <div class="swiper best-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bc1/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bc1b/400/500" alt="" class="img-hover" loading="lazy" /><span class="product-card__badge">BEST</span></div><div class="product-card__info"><p class="product-card__name">Motion Dry Tee</p><div class="product-card__price"><span class="price-original">45,000원</span><span class="price-sale">36,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bc2/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bc2b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Slim Fit Track Pants</p><div class="product-card__price"><span class="price-original">79,000원</span><span class="price-sale">63,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bc3/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bc3b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Rivant Logo Hoodie</p><div class="product-card__price"><span class="price-original">99,000원</span><span class="price-sale">79,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bc4/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bc4b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Active Crop Top</p><div class="product-card__price"><span class="price-original">39,000원</span><span class="price-sale">31,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bc5/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bc5b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Wind Breaker Jacket</p><div class="product-card__price"><span class="price-original">159,000원</span><span class="price-sale">127,200원</span><span class="price-rate">20%</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-progressbar-custom best-progressbar"><div class="swiper-progressbar-fill"></div></div>
+    </div>
+
+    <!-- ACC Panel -->
+    <div id="best-acc" class="best-tab-panel" style="display:none">
+      <div class="best-swiper-wrap">
+        <div class="swiper best-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/ba1/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/ba1b/400/500" alt="" class="img-hover" loading="lazy" /><span class="product-card__badge">BEST</span></div><div class="product-card__info"><p class="product-card__name">Sport Backpack 25L</p><div class="product-card__price"><span class="price-original">89,000원</span><span class="price-sale">71,200원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/ba2/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/ba2b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Rivant Active Cap</p><div class="product-card__price"><span class="price-original">35,000원</span><span class="price-sale">28,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/ba3/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/ba3b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Compression Socks 5P</p><div class="product-card__price"><span class="price-original">25,000원</span><span class="price-sale">20,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/ba4/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/ba4b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Water Bottle 1L</p><div class="product-card__price"><span class="price-original">32,000원</span><span class="price-sale">25,600원</span><span class="price-rate">20%</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-progressbar-custom best-progressbar"><div class="swiper-progressbar-fill"></div></div>
+    </div>
+
+    <!-- Sports Panel -->
+    <div id="best-sports" class="best-tab-panel" style="display:none">
+      <div class="best-swiper-wrap">
+        <div class="swiper best-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bsp1/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bsp1b/400/500" alt="" class="img-hover" loading="lazy" /><span class="product-card__badge">BEST</span></div><div class="product-card__info"><p class="product-card__name">Running Set (Top+Bottom)</p><div class="product-card__price"><span class="price-original">130,000원</span><span class="price-sale">104,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bsp2/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bsp2b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Yoga Set Women</p><div class="product-card__price"><span class="price-original">110,000원</span><span class="price-sale">88,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bsp3/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bsp3b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Tennis Polo Shirt</p><div class="product-card__price"><span class="price-original">75,000원</span><span class="price-sale">60,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/bsp4/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/bsp4b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name">Futsal Training Kit</p><div class="product-card__price"><span class="price-original">95,000원</span><span class="price-sale">76,000원</span><span class="price-rate">20%</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-progressbar-custom best-progressbar"><div class="swiper-progressbar-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 04 — COLLECTION
+============================== -->
+<section class="section section-collection">
+  <div class="inner">
+    <div class="collection-left reveal">
+      <span class="flash-title">SS 2026</span>
+      <h2 class="section-title" style="color:var(--white)">컬렉션을 완성하는<br/>당신의 선택</h2>
+      <p>RIVANT 2026 Spring/Summer Collection.<br />새로운 계절, 새로운 움직임을 준비하세요.</p>
+      <a href="pages/product-list.html" class="btn btn-white" style="display:inline-flex">Shop Collection</a>
+      <div style="margin-top:40px">
+        <div class="swiper collection-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/col1/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/col1b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name" style="color:var(--white)">Minimal Logo Tee</p><div class="product-card__price"><span class="price-sale" style="color:rgba(255,255,255,0.9)">49,000원</span><span class="price-rate">25%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/col2/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/col2b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name" style="color:var(--white)">Wide Cargo Pants</p><div class="product-card__price"><span class="price-sale" style="color:rgba(255,255,255,0.9)">99,000원</span><span class="price-rate">20%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/col3/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/col3b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name" style="color:var(--white)">Sport Zip Jacket</p><div class="product-card__price"><span class="price-sale" style="color:rgba(255,255,255,0.9)">139,000원</span><span class="price-rate">30%</span></div></div></div></div>
+            <div class="swiper-slide"><div class="product-card"><div class="product-card__img"><img src="https://picsum.photos/seed/col4/400/500" alt="상품" class="img-main" loading="lazy" /><img src="https://picsum.photos/seed/col4b/400/500" alt="" class="img-hover" loading="lazy" /></div><div class="product-card__info"><p class="product-card__name" style="color:var(--white)">Essential Cap</p><div class="product-card__price"><span class="price-sale" style="color:rgba(255,255,255,0.9)">35,000원</span><span class="price-rate">20%</span></div></div></div></div>
+          </div>
+        </div>
+        <div class="swiper-progressbar-custom collection-progressbar" style="background:rgba(255,255,255,0.15)"><div class="swiper-progressbar-fill"></div></div>
+      </div>
+    </div>
+    <div class="collection-right reveal reveal-delay-2">
+      <img src="https://picsum.photos/seed/col-main/960/1200" alt="2026 Collection" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 05 — ABOUT US
+============================== -->
+<section class="section-about">
+  <div class="about-marquee-wrap">
+    <div class="about-marquee">
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <!-- Duplicate for seamless loop -->
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+      <span>FOCUS IT</span><span class="accent">●</span>
+    </div>
+  </div>
+  <div class="about-body">
+    <span class="flash-title">About Us</span>
+    <div class="about-img reveal">
+      <img src="https://picsum.photos/seed/about-main/1800/900" alt="About RIVANT" loading="lazy" />
+    </div>
+    <h2 class="main-title reveal">A Sports Culture Brand<br/>of Immersion and Wit<br/>Inspiration and Values<br/>for Better Play</h2>
+    <p class="sub-title reveal reveal-delay-1">몰입과 위트의 스포츠 컬처 브랜드<br/>더 나은 플레이를 위한 영감과 가치</p>
+    <a href="#" class="btn btn-white btn-lg reveal reveal-delay-2">VIEW MORE</a>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 06 — RIVANT STYLE
+============================== -->
+<section class="section section-style">
+  <div class="inner">
+    <div class="section-head">
+      <h2 class="section-title reveal">Rivant Style</h2>
+      <div class="reveal reveal-delay-1" style="display:flex;align-items:center;gap:8px">
+        <button class="style-prev icon-btn" style="width:40px;height:40px;border:1px solid var(--line);border-radius:50%" aria-label="이전">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="style-next icon-btn" style="width:40px;height:40px;border:1px solid var(--line);border-radius:50%" aria-label="다음">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="swiper style-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="style-card">
+          <div class="style-card__img"><img src="https://picsum.photos/seed/sty1/500/600" alt="Rivant Style 1" loading="lazy" /></div>
+          <div class="style-card__insta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@rivant_official</span></div>
+          <div class="style-card__products">
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm1/200/200" alt="" loading="lazy" /><p>Motion Flex Tee</p><span class="price">34,300원</span></div>
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm2/200/200" alt="" loading="lazy" /><p>AeroLite Shorts</p><span class="price">47,200원</span></div>
+          </div>
+        </div></div>
+        <div class="swiper-slide"><div class="style-card">
+          <div class="style-card__img"><img src="https://picsum.photos/seed/sty2/500/600" alt="Rivant Style 2" loading="lazy" /></div>
+          <div class="style-card__insta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@soyun_lifestyle</span></div>
+          <div class="style-card__products">
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm3/200/200" alt="" loading="lazy" /><p>Slim Track Pants</p><span class="price">63,200원</span></div>
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm4/200/200" alt="" loading="lazy" /><p>Sport Backpack</p><span class="price">71,200원</span></div>
+          </div>
+        </div></div>
+        <div class="swiper-slide"><div class="style-card">
+          <div class="style-card__img"><img src="https://picsum.photos/seed/sty3/500/600" alt="Rivant Style 3" loading="lazy" /></div>
+          <div class="style-card__insta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@jihun_runner</span></div>
+          <div class="style-card__products">
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm5/200/200" alt="" loading="lazy" /><p>Cloud Runner Pro</p><span class="price">127,200원</span></div>
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm6/200/200" alt="" loading="lazy" /><p>Speed Mesh Cap</p><span class="price">28,000원</span></div>
+          </div>
+        </div></div>
+        <div class="swiper-slide"><div class="style-card">
+          <div class="style-card__img"><img src="https://picsum.photos/seed/sty4/500/600" alt="Rivant Style 4" loading="lazy" /></div>
+          <div class="style-card__insta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@active_heejin</span></div>
+          <div class="style-card__products">
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm7/200/200" alt="" loading="lazy" /><p>Active Crop Top</p><span class="price">31,200원</span></div>
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm8/200/200" alt="" loading="lazy" /><p>Rivant Logo Hoodie</p><span class="price">79,200원</span></div>
+          </div>
+        </div></div>
+        <div class="swiper-slide"><div class="style-card">
+          <div class="style-card__img"><img src="https://picsum.photos/seed/sty5/500/600" alt="Rivant Style 5" loading="lazy" /></div>
+          <div class="style-card__insta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@dohyun_create</span></div>
+          <div class="style-card__products">
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm9/200/200" alt="" loading="lazy" /><p>Wide Cargo Pants</p><span class="price">99,000원</span></div>
+            <div class="style-mini-card"><img src="https://picsum.photos/seed/sm10/200/200" alt="" loading="lazy" /><p>Essential Cap</p><span class="price">35,000원</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="swiper-pagination style-pagination" style="position:static;margin-top:28px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SECTION 07 — LOOKBOOK
+============================== -->
+<section class="section-lookbook">
+  <div class="lookbook-track">
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk1/480/640" alt="LookBook 1" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk2/480/640" alt="LookBook 2" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk3/480/640" alt="LookBook 3" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk4/480/640" alt="LookBook 4" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk5/480/640" alt="LookBook 5" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk6/480/640" alt="LookBook 6" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk7/480/640" alt="LookBook 7" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk8/480/640" alt="LookBook 8" loading="lazy" /></div>
+    <!-- Duplicate for seamless loop -->
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk1/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk2/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk3/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk4/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk5/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk6/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk7/480/640" alt="" loading="lazy" /></div>
+    <div class="lookbook-item"><img src="https://picsum.photos/seed/lk8/480/640" alt="" loading="lazy" /></div>
+  </div>
+</section>
+
+<!-- ==============================
+     FOOTER
+============================== -->
+<footer id="footer">
+  <div class="inner">
+    <div class="footer-inner">
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo_w.png" alt="RIVANT" /></div>
+        <p>끊임없이 도전하며 새로운 스타일을<br/>선도하는 프리미엄 스포츠 패션 브랜드.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-btn" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-btn" aria-label="KakaoTalk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 5.92 2 10.76c0 3.12 1.84 5.88 4.62 7.5L5.5 22l4.5-2.5c.65.1 1.32.15 2 .15 5.52 0 10-3.92 10-8.74S17.52 2 12 2z"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Customer Center -->
+      <div class="footer-col">
+        <h4>Customer Center</h4>
+        <div class="footer-cs-tel">1577-1577</div>
+        <p class="footer-cs-hours">월 ~ 금 10:00 ~ 18:00<br/>주말 및 공휴일 휴무</p>
+        <a href="mailto:help@rivant.com" class="btn btn-secondary btn-sm">이메일 문의</a>
+      </div>
+
+      <!-- Order / Guide -->
+      <div class="footer-col">
+        <h4>주문 안내</h4>
+        <div class="footer-links">
+          <a href="#">주문조회</a>
+          <a href="#">Q&amp;A 문의</a>
+          <a href="#">공지사항</a>
+          <a href="#">매장안내</a>
+        </div>
+      </div>
+
+      <!-- Company -->
+      <div class="footer-col">
+        <h4>Company</h4>
+        <div class="footer-links">
+          <a href="#">회사소개</a>
+          <a href="#">이용안내</a>
+          <a href="#">개인정보처리방침</a>
+          <a href="#">이용약관</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-info">
+        <span>상호명: 주식회사 리반트</span>
+        <span>대표: 홍길동</span>
+        <span>주소: 서울특별시 강남구 테헤란로 123</span><br/>
+        <span>통신판매업: 제2026-서울강남-0001호</span>
+        <span>사업자등록번호: 123-45-67890</span>
+        <span>개인정보보호책임자: 홍길동</span>
+        <span>이메일: help@rivant.com</span>
+      </p>
+      <nav class="footer-nav">
+        <a href="#">회사소개</a>
+        <a href="#">이용안내</a>
+        <a href="#" style="font-weight:600;color:rgba(255,255,255,0.7)">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+      </nav>
+      <p class="footer-copyright">COPYRIGHT &copy; 2026 RIVANT. ALL RIGHTS RESERVED.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+<script src="js/header.js"></script>
+<script src="js/animation.js"></script>
+<script src="js/swiper-init.js"></script>
+</body>
+</html>
