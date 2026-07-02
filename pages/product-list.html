@@ -152,154 +152,163 @@
   <script src="../js/main.js"></script>
   <script src="../js/header.js"></script>
   <script>
+  /* ── Supabase REST API 직접 호출 (SDK 의존성 없음) ── */
+  const _SB_URL = 'https://icpadkshsayuzpgiaojh.supabase.co';
+  const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcGFka3Noc2F5dXpwZ2lhb2poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjU5NzMsImV4cCI6MjA5NjgwMTk3M30.0dn3CqhajZecDVGUSX6tKo6JnCKYLPUBkon9eUPs6Dc';
+  const _HEADERS = { 'apikey': _SB_KEY, 'Authorization': 'Bearer ' + _SB_KEY };
+
+  async function sbGet(table, params) {
+    const url = new URL(_SB_URL + '/rest/v1/' + table);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
+    const res = await fetch(url.toString(), { headers: _HEADERS });
+    if (!res.ok) throw new Error(table + ' ' + res.status + ': ' + await res.text());
+    return res.json();
+  }
+
   (async function () {
-    const grid = document.getElementById('productGrid');
+    const grid    = document.getElementById('productGrid');
+    const catEl   = document.getElementById('catTitle');
+    const subCats = document.getElementById('subCats');
+    const countEl = document.getElementById('prodCount');
+
     const params = new URLSearchParams(location.search);
     const cat = (params.get('cat') || 'all').toLowerCase();
 
     const catMap = {
-      men:      { title: 'Men',          subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '남성' },
-      women:    { title: 'Women',        subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '여성' },
-      shoes:    { title: 'Shoes',        subs: ['All Item','Running','Training','Lifestyle','Outdoor'],       dbName: '신발' },
-      acc:      { title: 'ACC',          subs: ['All Item','Bag','Cap','Socks'],                             dbName: '액세서리' },
-      all:      { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'],                     dbName: null },
+      men:   { title: 'Men',          subs: ['All Item','T-Shirts','Knit','Pants','Outer'], dbName: '남성' },
+      women: { title: 'Women',        subs: ['All Item','T-Shirts','Pants','Outer'],        dbName: '여성' },
+      shoes: { title: 'Shoes',        subs: ['All Item','남성화','여성화'],                   dbName: '신발' },
+      acc:   { title: 'ACC',          subs: ['All Item','Bag','Cap','Socks'],                dbName: '액세서리' },
+      all:   { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'],        dbName: null },
     };
 
     const info = catMap[cat] || catMap.all;
-    document.getElementById('catTitle').textContent = info.title;
-    document.getElementById('subCats').innerHTML = info.subs.map((s, i) =>
-      `<span class="sub-cat ${i === 0 ? 'active' : ''}" onclick="
-        this.parentElement.querySelectorAll('.sub-cat').forEach(el => el.classList.remove('active'));
-        this.classList.add('active')">${s}</span>`
+    catEl.textContent = info.title;
+    subCats.innerHTML = info.subs.map((s, i) =>
+      `<span class="sub-cat ${i === 0 ? 'active' : ''}"
+        onclick="this.closest('.sub-cats').querySelectorAll('.sub-cat').forEach(el=>el.classList.remove('active'));this.classList.add('active')"
+       >${s}</span>`
     ).join('');
 
-    // ── Supabase 클라이언트 확보 ──
-    // RivantApp.supabase가 없으면 직접 생성 (main.js 초기화 실패 대비)
-    let sb = window.RivantApp?.supabase;
-    if (!sb && window.supabase?.createClient) {
-      try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (_) {}
-    }
-    if (!sb) {
-      grid.innerHTML = `<p class="empty-msg">Supabase를 불러올 수 없습니다.<br><a href="javascript:location.reload()">새로고침</a></p>`;
-      return;
-    }
-
     try {
-      // ── 1. 카테고리 ID 목록 ──
-      let catIds = null;
+      /* 1. 카테고리 ID 수집 */
+      let catFilter = null;
       if (info.dbName) {
-        const { data: topCats } = await sb
-          .from('categories').select('id')
-          .eq('name', info.dbName).is('parent_id', null);
-
-        if (topCats?.length > 0) {
-          const topId = topCats[0].id;
-          const { data: subCats } = await sb
-            .from('categories').select('id').eq('parent_id', topId);
-          catIds = [topId, ...(subCats || []).map(c => c.id)];
+        const allCats = await sbGet('categories', { select: 'id,name,parent_id' });
+        const top = allCats.find(c => c.name === info.dbName && c.parent_id === null);
+        if (top) {
+          const subs = allCats.filter(c => c.parent_id === top.id).map(c => c.id);
+          catFilter = [top.id, ...subs];
         }
       }
 
-      // ── 2. 상품 목록 조회 (조인 없이 단순 쿼리) ──
-      let q = sb.from('products')
-        .select('id, name, thumbnail, brand_id, category_id')
-        .eq('status', 'ACTIVE');
-      if (catIds?.length > 0) q = q.in('category_id', catIds);
-      const { data: products, error: pErr } = await q.order('id', { ascending: false }).limit(48);
+      /* 2. 상품 조회 */
+      const prodParams = {
+        select:  'id,name,thumbnail,brand_id,category_id',
+        status:  'eq.ACTIVE',
+        order:   'id.desc',
+        limit:   '60',
+      };
+      if (catFilter) prodParams['category_id'] = 'in.(' + catFilter.join(',') + ')';
 
-      if (pErr) throw new Error('상품 조회 실패: ' + pErr.message);
+      const products = await sbGet('products', prodParams);
+
       if (!products || products.length === 0) {
-        grid.innerHTML = `<p class="empty-msg">해당 카테고리에 상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
-        document.getElementById('prodCount').textContent = 0;
+        grid.innerHTML = `<p class="empty-msg">해당 카테고리에 상품이 없습니다.<br>
+          <a href="product-list.html">전체 상품 보기 →</a></p>`;
+        countEl.textContent = '0';
         return;
       }
 
-      // ── 3. SKU 가격 조회 (별도 쿼리로 분리) ──
-      const pIds = products.map(p => p.id);
-      const { data: skus } = await sb
-        .from('product_skus').select('product_id, price, sale_price, status')
-        .in('product_id', pIds);
+      /* 3. SKU 가격 조회 */
+      const pIds = products.map(p => p.id).join(',');
+      const skus = await sbGet('product_skus', {
+        select:      'product_id,price,sale_price,status',
+        product_id:  'in.(' + pIds + ')',
+        status:      'eq.ACTIVE',
+      });
 
-      // ── 4. 브랜드명 조회 ──
+      /* 4. 브랜드명 조회 */
       const bIds = [...new Set(products.map(p => p.brand_id).filter(Boolean))];
       let brandMap = {};
-      if (bIds.length > 0) {
-        const { data: brands } = await sb.from('brands').select('id, name').in('id', bIds);
-        (brands || []).forEach(b => { brandMap[b.id] = b.name; });
+      if (bIds.length) {
+        const brands = await sbGet('brands', { select: 'id,name', id: 'in.(' + bIds.join(',') + ')' });
+        brands.forEach(b => { brandMap[b.id] = b.name; });
       }
 
-      // ── 5. 데이터 병합 ──
-      const merged = products.map(p => ({
-        ...p,
-        brandName: brandMap[p.brand_id] || '',
-        skuList: (skus || []).filter(s => s.product_id === p.id && s.status === 'ACTIVE'),
-      }));
+      /* 5. 병합 */
+      const merged = products.map(p => {
+        const pSkus = skus.filter(s => s.product_id === p.id);
+        const prices  = pSkus.map(s => s.sale_price || s.price).filter(Boolean);
+        const origPs  = pSkus.map(s => s.price).filter(Boolean);
+        const minSale = prices.length  ? Math.min(...prices)  : 0;
+        const minOrig = origPs.length  ? Math.min(...origPs)  : 0;
+        const hasSale = pSkus.some(s  => s.sale_price && s.sale_price < s.price);
+        const rate    = hasSale && minOrig > 0 ? Math.round((1 - minSale / minOrig) * 100) : 0;
+        return { ...p, brandName: brandMap[p.brand_id] || '', minSale, minOrig, hasSale, rate };
+      });
 
       renderAll(merged);
 
     } catch (err) {
-      console.error('[product-list] error:', err);
-      grid.innerHTML = `<p class="empty-msg">상품을 불러오는 중 오류가 발생했습니다.<br><small style="color:#aaa">${err.message}</small><br><a href="javascript:location.reload()">새로고침</a></p>`;
+      console.error('[product-list]', err);
+      grid.innerHTML = `<p class="empty-msg">상품을 불러오지 못했습니다.<br>
+        <small style="color:#bbb;font-size:12px">${err.message}</small><br>
+        <a href="javascript:location.reload()">새로고침</a></p>`;
     }
 
-    // ── 헬퍼 ──
-    let _allItems = [];
-
-    function calcPrice(skuList) {
-      if (!skuList.length) return { minSale: 0, minOrig: 0, hasSale: false, rate: 0 };
-      const salePrices = skuList.map(s => s.sale_price || s.price).filter(Boolean);
-      const origPrices = skuList.map(s => s.price).filter(Boolean);
-      const minSale = salePrices.length ? Math.min(...salePrices) : 0;
-      const minOrig = origPrices.length ? Math.min(...origPrices) : 0;
-      const hasSale = skuList.some(s => s.sale_price && s.sale_price < s.price);
-      const rate = hasSale && minOrig > 0 ? Math.round((1 - minSale / minOrig) * 100) : 0;
-      return { minSale, minOrig, hasSale, rate };
-    }
+    /* ── 렌더링 ── */
+    const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop';
+    let _all = [];
 
     function cardHTML(p) {
-      const { minSale, minOrig, hasSale, rate } = calcPrice(p.skuList);
-      const fallback = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop';
-      const thumb = p.thumbnail || fallback;
-      return `
-        <a href="product-detail.html?id=${p.id}" class="product-card">
-          <div class="product-card__img">
-            <img src="${thumb}" alt="${p.name}" class="img-main" loading="lazy" onerror="this.src='${fallback}'" />
-            <img src="${thumb}" alt="" class="img-hover" loading="lazy" onerror="this.src='${fallback}'" />
-            <button class="product-card__wish" onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </button>
+      const thumb = p.thumbnail || FALLBACK_IMG;
+      return `<a href="product-detail.html?id=${p.id}" class="product-card">
+        <div class="product-card__img">
+          <img src="${thumb}" alt="${p.name}" class="img-main" loading="lazy"
+               onerror="this.src='${FALLBACK_IMG}'" />
+          <img src="${thumb}" alt="" class="img-hover" loading="lazy"
+               onerror="this.src='${FALLBACK_IMG}'" />
+          <button class="product-card__wish"
+                  onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78
+                       7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="product-card__info">
+          ${p.brandName ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${p.brandName}</p>` : ''}
+          <p class="product-card__name">${p.name}</p>
+          <div class="product-card__price">
+            ${p.hasSale ? `<span class="price-original">${p.minOrig.toLocaleString()}원</span>` : ''}
+            <span class="price-sale">${p.minSale > 0 ? p.minSale.toLocaleString() + '원' : '-'}</span>
+            ${p.rate > 0 ? `<span class="price-rate">${p.rate}%</span>` : ''}
           </div>
-          <div class="product-card__info">
-            ${p.brandName ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${p.brandName}</p>` : ''}
-            <p class="product-card__name">${p.name}</p>
-            <div class="product-card__price">
-              ${hasSale ? `<span class="price-original">${minOrig.toLocaleString()}원</span>` : ''}
-              <span class="price-sale">${minSale > 0 ? minSale.toLocaleString() + '원' : '가격 문의'}</span>
-              ${rate > 0 ? `<span class="price-rate">${rate}%</span>` : ''}
-            </div>
-          </div>
-        </a>`;
+        </div>
+      </a>`;
     }
 
     function renderGrid(list) {
-      document.getElementById('prodCount').textContent = list.length;
+      countEl.textContent = list.length;
       grid.innerHTML = list.length
         ? list.map(cardHTML).join('')
         : `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
     }
 
     function renderAll(list) {
-      _allItems = list.map(p => ({ ...p, ...calcPrice(p.skuList) }));
-      renderGrid(_allItems);
+      _all = list;
+      renderGrid(_all);
     }
 
     document.getElementById('sortSelect').addEventListener('change', e => {
-      const val = e.target.value;
-      const sorted = [..._allItems];
-      if      (val === 'low')     sorted.sort((a, b) => a.minSale - b.minSale);
-      else if (val === 'high')    sorted.sort((a, b) => b.minSale - a.minSale);
-      else if (val === 'popular') sorted.sort((a, b) => b.rate - a.rate);
-      renderGrid(sorted);
+      const v = e.target.value;
+      const s = [..._all];
+      if      (v === 'low')     s.sort((a, b) => a.minSale - b.minSale);
+      else if (v === 'high')    s.sort((a, b) => b.minSale - a.minSale);
+      else if (v === 'popular') s.sort((a, b) => b.rate    - a.rate);
+      renderGrid(s);
     });
 
   })();
