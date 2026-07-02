@@ -1,8 +1,10 @@
 /* ===========================
    MAIN — Cart & Auth helpers
 =========================== */
+(function () {
 
 // Supabase client (loaded via CDN)
+// IIFE로 감싸 전역 let supabase 선언이 CDN bundle과 충돌하지 않도록 함
 let supabase = null;
 try {
   if (typeof window !== 'undefined' && window.supabase) {
@@ -102,3 +104,5 @@ function fmtPrice(n) {
 }
 
 window.RivantApp = { Cart, Auth, showToast, fmtPrice, supabase };
+
+})();

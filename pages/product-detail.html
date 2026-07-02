@@ -310,7 +310,7 @@
             <span id="qtyDisplay">${_qty}</span>
             <button onclick="changeQty(1)">+</button>
           </div>
-          <span class="selected-item-price">${RivantApp.fmtPrice(unitPrice * _qty)}</span>
+          <span class="selected-item-price">${Number(unitPrice * _qty).toLocaleString('ko-KR')}원</span>
           <button onclick="clearSelection()" title="삭제"
             style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
         </div>
@@ -318,7 +318,7 @@
     console.log('[HTML]', html);
     document.getElementById('selectedOptions').innerHTML = html;
     console.log('[DONE]');
-    document.getElementById('totalPrice').textContent = RivantApp.fmtPrice(unitPrice * _qty);
+    document.getElementById('totalPrice').textContent = Number(unitPrice * _qty).toLocaleString('ko-KR') + '원';
   }
 
   // 데이터 로더에서 호출하는 래퍼 — 둘 다 선택된 경우만 표시
