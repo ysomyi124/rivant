@@ -113,14 +113,18 @@
     link.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      // 현재 경로 기준으로 로그인 페이지 경로 결정
       const href = link.getAttribute('href') || '';
-      const isSubPage = href.includes('../') || (!href.includes('pages/') && !href.startsWith('http'));
+      const isSubPage = !href.includes('pages/') && !href.includes('../');
       const loginPath = isSubPage ? 'login.html' : 'pages/login.html';
       const mypagePath = link.dataset.mypage || href;
 
       try {
-        const user = window.RivantApp ? await RivantApp.Auth.getUser() : null;
+        let user = null;
+        if (window.RivantApp?.supabase) {
+          // getSession → localStorage 즉시 읽기, 네트워크 불필요
+          const { data: { session } } = await RivantApp.supabase.auth.getSession();
+          user = session?.user ?? null;
+        }
         window.location.href = user ? mypagePath : loginPath;
       } catch (_) {
         window.location.href = loginPath;

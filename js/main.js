@@ -37,8 +37,9 @@ const Auth = {
   async getUser() {
     if (!supabase) return null;
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      return user;
+      // getSession은 localStorage에서 즉시 읽음 — 네트워크 요청 없음
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.user ?? null;
     } catch (e) { return null; }
   },
   async signIn(email, password) {
