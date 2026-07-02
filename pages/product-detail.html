@@ -294,10 +294,11 @@
     console.log('renderSelectedOption called');
     console.log('selectedOptions el:', document.getElementById('selectedOptions'));
     console.log('totalPrice el:', document.getElementById('totalPrice'));
+    console.log('[RENDER]', { color: _selColorName, size: _selSizeName });
     if (!_product) return;
     const unitPrice = currentUnitPrice();
     const optText = [_selColorName, _selSizeName].filter(Boolean).join(' / ');
-    document.getElementById('selectedOptions').innerHTML = `
+    const html = `
       <div class="selected-item">
         <div style="flex:1;min-width:0">
           <p class="selected-item-name">${_product.name}</p>
@@ -314,6 +315,9 @@
             style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
         </div>
       </div>`;
+    console.log('[HTML]', html);
+    document.getElementById('selectedOptions').innerHTML = html;
+    console.log('[DONE]');
     document.getElementById('totalPrice').textContent = RivantApp.fmtPrice(unitPrice * _qty);
   }
 
@@ -327,6 +331,7 @@
   }
 
   window.selectColor = function(btn, color, cid) {
+    console.log('[EVENT] color click', cid, color);
     document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     _selColorName = color;
@@ -342,6 +347,7 @@
   };
 
   window.selectSize = function(btn, size, sid) {
+    console.log('[EVENT] size click', sid, size);
     if (btn.classList.contains('disabled')) return;
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
