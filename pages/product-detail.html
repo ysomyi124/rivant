@@ -182,9 +182,7 @@
         </div>
 
         <!-- 선택된 옵션 표시 -->
-        <div class="selected-options" id="selectedOptions">
-          <p class="selected-placeholder">색상과 사이즈를 선택해주세요</p>
-        </div>
+        <div class="selected-options" id="selectedOptions"></div>
 
         <!-- 총 결제금액 -->
         <div class="order-total">
@@ -260,6 +258,8 @@
   let _selSizeId = null;
   let _selSizeName = '';
   let _qty = 1;
+  let _hasColorOpts = false;
+  let _hasSizeOpts = false;
 
   const COLOR_MAP = {
     Black:'#111111', White:'#ffffff', Gray:'#9ca3af',
@@ -288,21 +288,24 @@
   function updateSelected() {
     const el = document.getElementById('selectedOptions');
     const totalEl = document.getElementById('totalPrice');
-    const pName = _product?.name || '';
-    const unitPrice = currentUnitPrice();
-    const total = unitPrice * _qty;
 
-    if (!pName || (!_selColorName && !_selSizeName && !pName)) {
-      el.innerHTML = '<p class="selected-placeholder">색상과 사이즈를 선택해주세요</p>';
+    // 필수 옵션이 모두 선택되었을 때만 아이템 표시
+    const colorDone = !_hasColorOpts || _selColorName;
+    const sizeDone  = !_hasSizeOpts  || _selSizeName;
+
+    if (!_product || !colorDone || !sizeDone) {
+      el.innerHTML = '';
       totalEl.textContent = '0원';
       return;
     }
 
+    const unitPrice = currentUnitPrice();
     const optText = [_selColorName, _selSizeName].filter(Boolean).join(' / ');
+
     el.innerHTML = `
       <div class="selected-item">
-        <div>
-          <p class="selected-item-name">${pName}</p>
+        <div style="flex:1;min-width:0">
+          <p class="selected-item-name">${_product.name}</p>
           ${optText ? `<p class="selected-item-opt">${optText}</p>` : ''}
         </div>
         <div class="selected-item-qty">
@@ -312,9 +315,11 @@
             <button onclick="changeQty(1)">+</button>
           </div>
           <span class="selected-item-price">${RivantApp.fmtPrice(unitPrice * _qty)}</span>
+          <button onclick="clearSelection()" title="삭제"
+            style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
         </div>
       </div>`;
-    totalEl.textContent = RivantApp.fmtPrice(total);
+    totalEl.textContent = RivantApp.fmtPrice(unitPrice * _qty);
   }
 
   window.selectColor = function(btn, color, cid) {
@@ -335,6 +340,17 @@
     updateSelected();
   };
 
+  window.clearSelection = function() {
+    _selColorId = null; _selColorName = '';
+    _selSizeId  = null; _selSizeName  = '';
+    _qty = 1;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    const lbl = document.getElementById('selectedColorLabel');
+    if (lbl) lbl.textContent = '-';
+    updateSelected();
+  };
+
   window.changeQty = function(delta) {
     _qty = Math.max(1, _qty + delta);
     const el = document.getElementById('qtyDisplay');
@@ -347,7 +363,7 @@
 
   window.addToCart = function() {
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
-    if (!_selColorName && !_selSizeName && _activeSkus.length > 0) {
+    if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
       alert('옵션을 선택해주세요.'); return;
     }
     const sku = getCurrentSku();
@@ -366,7 +382,7 @@
 
   window.buyNow = function() {
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
-    if (!_selColorName && !_selSizeName && _activeSkus.length > 0) {
+    if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
       alert('옵션을 선택해주세요.'); return;
     }
     const sku = getCurrentSku();
@@ -410,30 +426,35 @@
       const url = new URL(_SB_URL + '/rest/v1/' + table);
       Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
       const r = await fetch(url.toString(), { headers: _H });
-      if (!r.ok) throw new Error(table + ' ' + r.status + ': ' + await r.text());
+      if (!r.ok) throw new Error(table + ' ' + r.status);
       return r.json();
     }
 
     const pid = new URLSearchParams(location.search).get('id') || '1';
 
     try {
-      // 상품 핵심 데이터를 병렬 fetch
-      const [products, skus, options, images, descs, stats] = await Promise.all([
-        sbGet('products', { id: 'eq.'+pid, select: 'id,name,summary,thumbnail,brand_id', limit: '1' }),
-        sbGet('product_skus', { product_id: 'eq.'+pid, select: 'id,color_id,size_id,price,sale_price,sku,status' }),
-        sbGet('product_options', { product_id: 'eq.'+pid, select: 'id,name' }),
-        sbGet('product_images', { product_id: 'eq.'+pid, select: 'image_url,type,sort_order', order: 'sort_order' }),
-        sbGet('product_descriptions', { product_id: 'eq.'+pid, select: 'content_html', limit: '1' }),
-        sbGet('products_statistics', { product_id: 'eq.'+pid, select: 'review_count,review_average,wish_count', limit: '1' }),
-      ]);
-
+      // ① 상품 기본 정보 먼저 (핵심 — 실패 시 오류 표시)
+      const products = await sbGet('products', {
+        id: 'eq.' + pid,
+        select: 'id,name,summary,thumbnail,brand_id',
+        limit: '1'
+      });
       const p = products[0];
       if (!p) {
         document.getElementById('detailName').textContent = '상품을 찾을 수 없습니다.';
         return;
       }
 
-      // 브랜드명 fetch
+      // ② 나머지 데이터 병렬 fetch — 개별 실패는 빈 배열로 처리
+      const [skus, options, images, descs, stats] = await Promise.all([
+        sbGet('product_skus',     { product_id: 'eq.'+pid, select: 'id,color_id,size_id,price,sale_price,sku,status' }).catch(() => []),
+        sbGet('product_options',  { product_id: 'eq.'+pid, select: 'id,name' }).catch(() => []),
+        sbGet('product_images',   { product_id: 'eq.'+pid, select: 'image_url,type,sort_order', order: 'sort_order' }).catch(() => []),
+        sbGet('product_descriptions', { product_id: 'eq.'+pid, select: 'content_html', limit: '1' }).catch(() => []),
+        sbGet('products_statistics',  { product_id: 'eq.'+pid, select: 'review_count,review_average,wish_count', limit: '1' }).catch(() => []),
+      ]);
+
+      // ③ 브랜드명
       let brandName = '';
       if (p.brand_id) {
         try {
@@ -442,7 +463,7 @@
         } catch {}
       }
 
-      // 옵션 값 fetch
+      // ④ 옵션 값
       let optionValues = [];
       if (options.length > 0) {
         try {
@@ -497,15 +518,15 @@
         document.getElementById('reviewCountLabel').textContent = `${cnt}개 리뷰`;
       }
 
-      // 가격
+      // 가격 (SKU)
       _activeSkus = skus.filter(s => s.status === 'ACTIVE');
       if (_activeSkus.length > 0) {
-        const prices = _activeSkus.map(s => s.sale_price || s.price);
+        const prices    = _activeSkus.map(s => s.sale_price || s.price);
         const origPrices = _activeSkus.map(s => s.price);
-        const minPrice = Math.min(...prices);
-        const minOrig  = Math.min(...origPrices);
-        const hasSale  = _activeSkus.some(s => s.sale_price && s.sale_price < s.price);
-        const discRate = hasSale && minOrig > 0 ? Math.round((1 - minPrice / minOrig) * 100) : 0;
+        const minPrice  = Math.min(...prices);
+        const minOrig   = Math.min(...origPrices);
+        const hasSale   = _activeSkus.some(s => s.sale_price && s.sale_price < s.price);
+        const discRate  = hasSale && minOrig > 0 ? Math.round((1 - minPrice / minOrig) * 100) : 0;
 
         document.getElementById('detailSale').textContent = `${minPrice.toLocaleString()}원`;
         if (hasSale) {
@@ -521,13 +542,14 @@
       }
 
       // 옵션 파싱
-      const colorOpt = options.find(o => o.name === '색상');
-      const sizeOpt  = options.find(o => o.name === '사이즈');
+      const colorOpt  = options.find(o => o.name === '색상');
+      const sizeOpt   = options.find(o => o.name === '사이즈');
       const colorVals = (colorOpt?.product_option_values || []).sort((a,b) => a.sort_order - b.sort_order);
       const sizeVals  = (sizeOpt?.product_option_values  || []).sort((a,b) => a.sort_order - b.sort_order);
 
       // 색상 버튼
       if (colorVals.length) {
+        _hasColorOpts = true;
         document.getElementById('colorSection').style.display = '';
         document.getElementById('colorOptions').innerHTML = colorVals.map((c, i) =>
           `<button class="color-btn ${i===0?'active':''}"
@@ -535,13 +557,14 @@
             onclick="selectColor(this,'${c.value}',${c.id})"
             title="${c.value}" data-cid="${c.id}"></button>`
         ).join('');
-        _selColorId = colorVals[0].id;
+        _selColorId   = colorVals[0].id;
         _selColorName = colorVals[0].value;
         document.getElementById('selectedColorLabel').textContent = _selColorName;
       }
 
       // 사이즈 버튼
       if (sizeVals.length) {
+        _hasSizeOpts = true;
         document.getElementById('sizeSection').style.display = '';
         document.getElementById('sizeOptions').innerHTML = sizeVals.map((s, i) => {
           const hasSku = _activeSkus.some(sk => sk.size_id === s.id);
@@ -558,10 +581,9 @@
         document.getElementById('tabInfoContent').innerHTML = descs[0].content_html;
       }
 
-      // 초기 선택 상태 표시
       updateSelected();
 
-      // 리뷰 로드 (실패해도 메인 렌더링에 영향 없음)
+      // 리뷰 (실패해도 상품 표시에 무관)
       try {
         const reviews = await sbGet('reviews', {
           product_id: 'eq.'+pid, select: 'id,rating,content,created_at',
@@ -583,7 +605,7 @@
         }
       } catch {}
 
-      // Q&A 로드 (실패해도 메인 렌더링에 영향 없음)
+      // Q&A (실패해도 상품 표시에 무관)
       try {
         const qnas = await sbGet('product_questions', {
           product_id: 'eq.'+pid, select: 'id,title,content,status,created_at',
