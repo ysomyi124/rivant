@@ -13,6 +13,13 @@
 
   if (!header) return;
 
+  const hasHero = document.querySelector('.hero');
+
+  // 서브 페이지: 항상 흰색 헤더
+  if (!hasHero) {
+    header.classList.add('sub-page');
+  }
+
   // Sticky header
   const onScroll = () => {
     if (window.scrollY > 50) {
@@ -20,13 +27,15 @@
       header.classList.remove('transparent');
     } else {
       header.classList.remove('scrolled');
-      if (!mobileNav?.classList.contains('open')) {
+      if (hasHero && !mobileNav?.classList.contains('open')) {
         header.classList.add('transparent');
       }
     }
   };
 
-  header.classList.add('transparent');
+  if (hasHero) {
+    header.classList.add('transparent');
+  }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
@@ -97,6 +106,26 @@
     searchOverlay?.classList.remove('open');
     document.body.style.overflow = '';
   }
+
+  // My Page — route to login if not authenticated
+  const myPageLinks = document.querySelectorAll('.mypage-link');
+  myPageLinks.forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const user = await RivantApp.Auth.getUser();
+        if (user) {
+          window.location.href = link.dataset.mypage || link.getAttribute('href') || 'pages/mypage.html';
+        } else {
+          const href = link.getAttribute('href') || '';
+          const loginHref = href.includes('pages/') ? 'pages/login.html' : (href.includes('../') ? '../pages/login.html' : 'login.html');
+          window.location.href = loginHref;
+        }
+      } catch (_) {
+        window.location.href = link.getAttribute('href') || 'pages/login.html';
+      }
+    });
+  });
 
   // Cart count from localStorage
   const updateCartBadge = () => {

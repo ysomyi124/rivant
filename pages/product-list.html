@@ -17,37 +17,114 @@
     body { font-family: var(--font-ko); padding-top: var(--header-h); }
     .cat-banner { background: var(--black); color: var(--white); padding: 60px; text-align: center; }
     .cat-banner h1 { font-family: var(--font-en); font-size: 48px; font-weight: 800; text-transform: uppercase; }
-    .sub-cats { display: flex; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--line); padding: 0 60px; background: var(--white); }
+    .sub-cats { display: flex; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--line); padding: 0 60px; background: var(--white); scrollbar-width: none; }
+    .sub-cats::-webkit-scrollbar { display: none; }
     .sub-cat { padding: 16px 20px; font-family: var(--font-en); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--desc-text); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color var(--trans-fast), border-color var(--trans-fast); }
     .sub-cat.active, .sub-cat:hover { color: var(--black); border-color: var(--black); }
     .list-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; }
     .list-count { font-size: 14px; color: var(--desc-text); }
     .list-sort { padding: 10px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 14px; cursor: pointer; background: var(--white); color: var(--black); font-family: var(--font-ko); }
     .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px 20px; padding-bottom: 80px; }
+    .empty-msg { grid-column:1/-1; text-align:center; padding:80px 20px; color:var(--desc-text); font-size:15px; }
+    .empty-msg a { color:var(--black); text-decoration:underline; }
     @media(max-width:1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } .cat-banner { padding: 40px 32px; } .cat-banner h1 { font-size: 36px; } .sub-cats { padding: 0 32px; } }
     @media(max-width:768px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 12px; } .cat-banner { padding: 32px 20px; } .cat-banner h1 { font-size: 28px; } .sub-cats { padding: 0 20px; } .list-toolbar { padding: 16px 0; } }
   </style>
 </head>
 <body>
+  <div class="overlay-bg"></div>
   <header id="header" class="scrolled">
     <div class="header-inner">
-      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
-      <nav class="header-nav" style="display:flex">
-        <div class="nav-item"><a href="product-list.html?cat=men" style="color:var(--black)">Men</a></div>
-        <div class="nav-item"><a href="product-list.html?cat=women" style="color:var(--black)">Women</a></div>
-        <div class="nav-item"><a href="product-list.html?cat=shoes" style="color:var(--black)">Shoes</a></div>
-        <div class="nav-item"><a href="product-list.html?cat=acc" style="color:var(--black)">ACC</a></div>
-        <div class="nav-item"><a href="promotion.html" style="color:var(--black)">Promotion</a></div>
+      <a href="../index.html" class="header-logo">
+        <img src="../images/logo_w.png" alt="RIVANT" class="logo-white" />
+        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" />
+      </a>
+      <nav class="header-nav">
+        <div class="nav-item has-mega">
+          <a href="product-list.html?cat=men">Men</a>
+          <div class="mega-menu">
+            <div class="mega-links">
+              <a href="product-list.html?cat=men" class="all-item">All Item →</a>
+              <a href="product-list.html?cat=men&sub=tshirts">T-Shirts</a>
+              <a href="product-list.html?cat=men&sub=knit">Knit</a>
+              <a href="product-list.html?cat=men&sub=pants">Pants</a>
+              <a href="product-list.html?cat=men&sub=outer">Outer</a>
+              <a href="product-list.html?cat=men&sub=shoes">Shoes</a>
+              <a href="product-list.html?cat=men&sub=acc">ACC</a>
+            </div>
+            <div class="mega-promos">
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=360&h=480&fit=crop&auto=format" alt="Men" loading="lazy" /><span>SS 2026 Collection</span></div>
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=360&h=480&fit=crop&auto=format" alt="New Arrivals" loading="lazy" /><span>New Arrivals</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-mega">
+          <a href="product-list.html?cat=women">Women</a>
+          <div class="mega-menu">
+            <div class="mega-links">
+              <a href="product-list.html?cat=women" class="all-item">All Item →</a>
+              <a href="product-list.html?cat=women&sub=tshirts">T-Shirts</a>
+              <a href="product-list.html?cat=women&sub=pants">Pants</a>
+              <a href="product-list.html?cat=women&sub=outer">Outer</a>
+              <a href="product-list.html?cat=women&sub=shoes">Shoes</a>
+              <a href="product-list.html?cat=women&sub=acc">ACC</a>
+            </div>
+            <div class="mega-promos">
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1571019613576-96e3f4a5bdd5?w=360&h=480&fit=crop&auto=format" alt="Women" loading="lazy" /><span>SS 2026 Collection</span></div>
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=360&h=480&fit=crop&auto=format" alt="Active Wear" loading="lazy" /><span>Active Wear</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+        <div class="nav-item has-mega">
+          <a href="product-list.html?cat=acc">ACC</a>
+          <div class="mega-menu">
+            <div class="mega-links">
+              <a href="product-list.html?cat=acc" class="all-item">All Item →</a>
+              <a href="product-list.html?cat=acc&sub=bag">Bag</a>
+              <a href="product-list.html?cat=acc&sub=cap">Cap</a>
+              <a href="product-list.html?cat=acc&sub=socks">Socks</a>
+            </div>
+            <div class="mega-promos">
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1556906781-9d5b17e20c28?w=360&h=480&fit=crop&auto=format" alt="ACC" loading="lazy" /><span>ACC Campaign</span></div>
+              <div class="mega-promo-item"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=360&h=480&fit=crop&auto=format" alt="Best Picks" loading="lazy" /><span>Best Picks</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item"><a href="promotion.html">Promotion</a></div>
+        <div class="nav-item"><a href="review.html">Review</a></div>
       </nav>
       <div class="header-icons">
-        <a href="cart.html" class="icon-btn" style="color:var(--black)">
+        <a href="cart.html" class="icon-btn" aria-label="장바구니">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-badge" style="display:none">0</span>
         </a>
-        <a href="mypage.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+        <a href="mypage.html" class="icon-btn mypage-link" aria-label="마이페이지" data-mypage="mypage.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <button class="mobile-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
+
+  <nav class="mobile-nav" aria-label="모바일 메뉴">
+    <div class="mobile-nav-header">
+      <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+      <button class="mobile-nav-close search-close" aria-label="메뉴 닫기"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-nav-body">
+      <div class="mobile-nav-item"><a href="product-list.html?cat=men">Men</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=women">Women</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+      <div class="mobile-nav-item"><a href="promotion.html">Promotion</a></div>
+      <div class="mobile-nav-item"><a href="review.html">Review</a></div>
+    </div>
+    <div class="mobile-nav-icons">
+      <a href="login.html" class="btn btn-secondary btn-sm">로그인</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">회원가입</a>
+    </div>
+  </nav>
 
   <div class="cat-banner">
     <h1 id="catTitle">All Products</h1>
@@ -57,82 +134,184 @@
 
   <main class="inner">
     <div class="list-toolbar">
-      <p class="list-count">총 <strong id="prodCount">24</strong>개 상품</p>
-      <select class="list-sort" onchange="sortProducts(this.value)">
+      <p class="list-count">총 <strong id="prodCount">0</strong>개 상품</p>
+      <select class="list-sort" id="sortSelect">
         <option value="new">신상품순</option>
         <option value="popular">인기상품순</option>
         <option value="low">낮은가격순</option>
         <option value="high">높은가격순</option>
       </select>
     </div>
-    <div class="product-grid" id="productGrid"></div>
+    <div class="product-grid" id="productGrid">
+      <p class="empty-msg">불러오는 중...</p>
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../js/config.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/header.js"></script>
   <script>
+  (async function () {
     const params = new URLSearchParams(location.search);
     const cat = params.get('cat') || 'all';
 
     const catMap = {
-      men: { title: 'Men', subs: ['All Item','T-Shirts','Knit','Pants','Outer','Cap','Bag','Shoes','Socks','ACC'] },
-      women: { title: 'Women', subs: ['All Item','T-Shirts','Knit','Pants','Skirt','Outer','Cap','Bag','Shoes','Socks','ACC'] },
-      shoes: { title: 'Shoes', subs: ['All Item','Running','Training','Lifestyle','Outdoor'] },
-      acc: { title: 'ACC', subs: ['All Item','Bag','Cap','Socks','Accessories'] },
-      all: { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'] },
+      men:      { title: 'Men',          subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '남성' },
+      women:    { title: 'Women',        subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '여성' },
+      shoes:    { title: 'Shoes',        subs: ['All Item','Running','Training','Lifestyle','Outdoor'],       dbName: '신발' },
+      acc:      { title: 'ACC',          subs: ['All Item','Bag','Cap','Socks','Accessories'],               dbName: '액세서리' },
+      running:  { title: 'Running',      subs: ['All Item'],  dbName: null },
+      training: { title: 'Training',     subs: ['All Item'],  dbName: null },
+      outdoor:  { title: 'Outdoor',      subs: ['All Item'],  dbName: null },
+      all:      { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'] },
     };
 
     const info = catMap[cat] || catMap.all;
     document.getElementById('catTitle').textContent = info.title;
-
-    const subCats = document.getElementById('subCats');
-    subCats.innerHTML = info.subs.map((s, i) =>
-      `<span class="sub-cat ${i===0?'active':''}" onclick="this.parentElement.querySelectorAll('.sub-cat').forEach(el=>el.classList.remove('active'));this.classList.add('active')">${s}</span>`
+    document.getElementById('subCats').innerHTML = info.subs.map((s, i) =>
+      `<span class="sub-cat ${i===0?'active':''}" onclick="
+        this.parentElement.querySelectorAll('.sub-cat').forEach(el=>el.classList.remove('active'));
+        this.classList.add('active')">${s}</span>`
     ).join('');
 
-    const products = Array.from({length: 12}, (_, i) => ({
-      id: i + 1,
-      name: ['Cloud Runner Pro','Motion Flex Tee','AeroLite Shorts','Speed Cap','Slim Track Pants','Rivant Hoodie','Sport Backpack','Compression Socks','Wind Jacket','Active Crop Top','Ultra Boost','Essential Cap'][i],
-      price: [159000,49000,59000,35000,89000,99000,79000,22000,159000,39000,139000,35000][i],
-      salePrice: [127200,34300,47200,28000,71200,79200,63200,15400,127200,31200,111200,28000][i],
-      rate: 20,
-      seed: `pl${i+1}`,
-    }));
+    const grid = document.getElementById('productGrid');
 
-    function renderProducts(list) {
-      document.getElementById('prodCount').textContent = list.length;
-      document.getElementById('productGrid').innerHTML = list.map(p => `
+    // Supabase 클라이언트 확인
+    const sb = window.RivantApp?.supabase;
+    if (!sb) {
+      grid.innerHTML = `<p class="empty-msg">상품을 불러올 수 없습니다. (네트워크 오류)<br><a href="product-list.html">새로고침</a></p>`;
+      return;
+    }
+
+    try {
+      // 카테고리 ID 목록 결정
+      let catIds = null;
+      if (info.dbName) {
+        const { data: topCats, error: catErr } = await sb
+          .from('categories')
+          .select('id')
+          .eq('name', info.dbName)
+          .is('parent_id', null);
+
+        if (!catErr && topCats && topCats.length > 0) {
+          const topId = topCats[0].id;
+          const { data: subCats } = await sb
+            .from('categories')
+            .select('id')
+            .eq('parent_id', topId);
+          catIds = [topId, ...(subCats || []).map(c => c.id)];
+        }
+      }
+
+      // 상품 조회
+      let query = sb.from('products')
+        .select('id, name, thumbnail, brand_id, brands(name), product_skus(price, sale_price, status)')
+        .eq('status', 'ACTIVE');
+
+      if (catIds && catIds.length > 0) {
+        query = query.in('category_id', catIds);
+      }
+
+      const { data: rows, error } = await query
+        .order('id', { ascending: false })
+        .limit(48);
+
+      if (error) {
+        console.error('Product query error:', error);
+        // brands join 없이 재시도
+        let q2 = sb.from('products')
+          .select('id, name, thumbnail, product_skus(price, sale_price, status)')
+          .eq('status', 'ACTIVE');
+        if (catIds && catIds.length > 0) q2 = q2.in('category_id', catIds);
+        const { data: rows2, error: err2 } = await q2.order('id', { ascending: false }).limit(48);
+        if (err2 || !rows2 || rows2.length === 0) {
+          grid.innerHTML = `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
+          return;
+        }
+        renderProductList(rows2, false);
+        return;
+      }
+
+      if (!rows || rows.length === 0) {
+        grid.innerHTML = `<p class="empty-msg">해당 카테고리에 상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
+        document.getElementById('prodCount').textContent = 0;
+        return;
+      }
+
+      renderProductList(rows, true);
+
+    } catch (err) {
+      console.error('Product list error:', err);
+      grid.innerHTML = `<p class="empty-msg">상품을 불러오는 중 오류가 발생했습니다.<br><a href="product-list.html">새로고침</a></p>`;
+    }
+
+    function processProducts(rows) {
+      return rows.map(p => {
+        const skus = (p.product_skus || []).filter(s => s.status === 'ACTIVE');
+        const salePrices = skus.map(s => s.sale_price || s.price).filter(Boolean);
+        const origPrices = skus.map(s => s.price).filter(Boolean);
+        const minSale = salePrices.length ? Math.min(...salePrices) : 0;
+        const minOrig = origPrices.length ? Math.min(...origPrices) : 0;
+        const hasSale = skus.some(s => s.sale_price && s.sale_price < s.price);
+        const rate = hasSale && minOrig > 0 ? Math.round((1 - minSale / minOrig) * 100) : 0;
+        return { ...p, minSale, minOrig, hasSale, rate };
+      });
+    }
+
+    function productCardHTML(p, withBrand) {
+      const brand = withBrand ? (p.brands?.name || '') : '';
+      return `
         <a href="product-detail.html?id=${p.id}" class="product-card">
           <div class="product-card__img">
-            <img src="https://picsum.photos/seed/${p.seed}/400/500" alt="${p.name}" class="img-main" loading="lazy" />
-            <img src="https://picsum.photos/seed/${p.seed}b/400/500" alt="" class="img-hover" loading="lazy" />
-            <span class="product-card__badge">${p.rate}%</span>
+            <img src="${p.thumbnail || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=500&fit=crop'}"
+                 alt="${p.name}" class="img-main" loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop'" />
+            <img src="${p.thumbnail || ''}" alt="" class="img-hover" loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop'" />
             <button class="product-card__wish" onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </button>
           </div>
           <div class="product-card__info">
+            ${brand ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${brand}</p>` : ''}
             <p class="product-card__name">${p.name}</p>
             <div class="product-card__price">
-              <span class="price-original">${p.price.toLocaleString()}원</span>
-              <span class="price-sale">${p.salePrice.toLocaleString()}원</span>
-              <span class="price-rate">${p.rate}%</span>
+              ${p.hasSale ? `<span class="price-original">${p.minOrig.toLocaleString()}원</span>` : ''}
+              <span class="price-sale">${p.minSale > 0 ? p.minSale.toLocaleString() + '원' : '-'}</span>
+              ${p.rate > 0 ? `<span class="price-rate">${p.rate}%</span>` : ''}
             </div>
           </div>
-        </a>
-      `).join('');
+        </a>`;
     }
 
-    function sortProducts(val) {
-      const sorted = [...products];
-      if (val === 'low') sorted.sort((a,b) => a.salePrice - b.salePrice);
-      else if (val === 'high') sorted.sort((a,b) => b.salePrice - a.salePrice);
-      else if (val === 'popular') sorted.sort(() => Math.random() - 0.5);
-      renderProducts(sorted);
+    let allProcessed = [];
+
+    function renderProductList(rows, withBrand) {
+      allProcessed = processProducts(rows);
+      document.getElementById('prodCount').textContent = allProcessed.length;
+      renderGrid(allProcessed, withBrand);
     }
 
-    renderProducts(products);
+    function renderGrid(list, withBrand = true) {
+      if (!list.length) {
+        grid.innerHTML = `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
+        return;
+      }
+      grid.innerHTML = list.map(p => productCardHTML(p, withBrand)).join('');
+    }
+
+    // 정렬
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      const val = e.target.value;
+      const sorted = [...allProcessed];
+      if (val === 'low')     sorted.sort((a,b) => a.minSale - b.minSale);
+      else if (val === 'high')    sorted.sort((a,b) => b.minSale - a.minSale);
+      else if (val === 'popular') sorted.sort((a,b) => (b.minSale > 0 ? 1 : 0) - (a.minSale > 0 ? 1 : 0));
+      renderGrid(sorted, true);
+    });
+
+  })();
   </script>
 </body>
 </html>

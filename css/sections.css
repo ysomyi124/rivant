@@ -284,13 +284,13 @@
    SECTION 04 — COLLECTION
 =========================== */
 .section-collection {
-  background: var(--black);
-  color: var(--white);
+  background: #fff;
+  color: var(--black);
 }
 
 .section-collection .inner {
   display: grid;
-  grid-template-columns: 1fr 480px;
+  grid-template-columns: 480px 1fr;
   gap: 60px;
   align-items: start;
 }
@@ -299,11 +299,9 @@
 
 .collection-left .section-title { margin-bottom: 12px; }
 
-.collection-left .flash-title { color: var(--accent); }
-
 .collection-left p {
   font-size: 15px;
-  color: rgba(255,255,255,0.6);
+  color: var(--desc-text);
   line-height: 1.7;
   margin-bottom: 40px;
 }
@@ -323,10 +321,6 @@
   border-radius: var(--radius-img);
 }
 
-/* Collection dark card */
-.section-collection .product-card__name { color: var(--white); }
-.section-collection .price-sale { color: var(--white); }
-
 /* ===========================
    SECTION 05 — ABOUT US
 =========================== */
@@ -338,29 +332,25 @@
 }
 
 .about-marquee-wrap {
-  padding: 28px 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 16px 0;
   overflow: hidden;
 }
 
 .about-marquee {
   display: flex;
   white-space: nowrap;
-  animation: marqueeLeft 12s linear infinite;
+  animation: marqueeLeft 18s linear infinite;
 }
 
 .about-marquee span {
   font-family: var(--font-en);
-  font-size: 13px;
+  font-size: 60px;
   font-weight: 700;
-  letter-spacing: 0.3em;
+  letter-spacing: 0em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: #fff;
   padding: 0 32px;
 }
-
-.about-marquee span.accent { color: var(--accent); }
 
 @keyframes marqueeLeft {
   from { transform: translateX(0); }
@@ -372,11 +362,6 @@
   text-align: center;
 }
 
-.about-body .flash-title {
-  justify-content: center;
-  color: var(--accent);
-  margin-bottom: 40px;
-}
 
 .about-img {
   width: 100%;
@@ -462,40 +447,9 @@
 .style-card__insta svg { color: var(--desc-text); }
 
 .style-card__products {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.style-mini-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.style-mini-card img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: var(--radius-input);
-  background: var(--bg-light);
-  transition: transform var(--trans-fast);
-}
-
-.style-mini-card:hover img { transform: scale(1.03); }
-
-.style-mini-card p {
-  font-size: 11px;
-  color: var(--desc-text);
-  line-height: 1.3;
-}
-
-.style-mini-card .price {
-  font-size: 12px;
-  font-weight: 700;
-  font-family: var(--font-en);
-  color: var(--black);
+  gap: 10px;
 }
 
 /* ===========================
@@ -514,7 +468,6 @@
   width: max-content;
 }
 
-.lookbook-track:hover { animation-play-state: paused; }
 
 @keyframes marqueeRight {
   from { transform: translateX(0); }
@@ -536,4 +489,3 @@
   transition: transform var(--trans-slow);
 }
 
-.lookbook-item:hover img { transform: scale(1.05); }

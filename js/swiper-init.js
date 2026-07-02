@@ -2,29 +2,32 @@
    SWIPER INITIALIZATIONS
 =========================== */
 (function () {
-  // Progressbar update helper
+  // Progressbar update helper — uses swiper.progress for accurate fill relative to visible slides
   function makeProgressbar(swiper, el) {
     if (!el) return;
     const fill = el.querySelector('.swiper-progressbar-fill');
     if (!fill) return;
     const update = () => {
-      const pct = ((swiper.realIndex + 1) / swiper.slides.length) * 100;
+      const slidesPerView = swiper.params.slidesPerView || 1;
+      const total = swiper.slides.length;
+      const viewable = typeof slidesPerView === 'number' ? slidesPerView : 1;
+      const maxIndex = Math.max(total - viewable, 1);
+      const pct = Math.min(((swiper.activeIndex + viewable) / total) * 100, 100);
       fill.style.width = pct + '%';
     };
     swiper.on('slideChange', update);
+    swiper.on('resize', update);
     update();
   }
 
-  // NEW Section Swiper
+  // NEW Section Swiper — no loop, no mousewheel
   const newSwiperEl = document.querySelector('.new-swiper');
   if (newSwiperEl) {
     const s = new Swiper(newSwiperEl, {
       slidesPerView: 2,
       spaceBetween: 16,
-      loop: true,
-      autoplay: { delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true },
+      loop: false,
       grabCursor: true,
-      mousewheel: { forwardOnly: true },
       breakpoints: {
         768: { slidesPerView: 3 },
         1280: { slidesPerView: 4 },

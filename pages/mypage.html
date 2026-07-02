@@ -11,154 +11,733 @@
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
   <link rel="stylesheet" href="../css/responsive.css" />
   <style>
-    body { font-family: var(--font-ko); padding-top: var(--header-h); background: var(--bg-light); }
-    .mypage-layout { display: grid; grid-template-columns: 240px 1fr; gap: 32px; padding: 48px 0 80px; align-items: start; }
-    /* Sidebar */
-    .mypage-sidebar { background: var(--white); border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow); }
-    .sidebar-profile { padding: 32px 24px; text-align: center; background: var(--black); color: var(--white); }
-    .sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 28px; }
-    .sidebar-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .sidebar-email { font-size: 12px; color: rgba(255,255,255,0.6); }
-    .sidebar-nav a { display: block; padding: 14px 24px; font-size: 14px; font-weight: 500; color: var(--sub-text); border-bottom: 1px solid var(--line); transition: all var(--trans-fast); }
-    .sidebar-nav a:last-child { border-bottom: none; }
-    .sidebar-nav a:hover, .sidebar-nav a.active { color: var(--black); background: var(--bg-light); font-weight: 600; }
-    .sidebar-nav a.active { border-left: 3px solid var(--accent); padding-left: 21px; }
-    /* Content */
-    .mypage-content { display: flex; flex-direction: column; gap: 24px; }
-    .my-card { background: var(--white); border-radius: var(--radius-card); padding: 32px; box-shadow: var(--shadow); }
-    .my-card-title { font-family: var(--font-en); font-size: 16px; font-weight: 700; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
-    .my-card-title a { font-size: 12px; color: var(--desc-text); font-weight: 500; text-transform: none; font-family: var(--font-ko); }
+    body { font-family: var(--font-ko); padding-top: var(--header-h); background: #f4f4f6; }
+
+    /* Layout */
+    .mypage-wrap { display: grid; grid-template-columns: 256px 1fr; gap: 28px; padding: 40px 0 100px; align-items: start; }
+
+    /* ── Sidebar ── */
+    .mypage-sidebar { position: sticky; top: calc(var(--header-h-scroll) + 20px); background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+    .sidebar-profile { padding: 28px 24px; background: var(--black); color: #fff; text-align: center; }
+    .sidebar-avatar { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 26px; }
+    .sidebar-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .sidebar-email { font-size: 12px; color: rgba(255,255,255,0.55); }
+    .sidebar-nav { padding: 8px 0; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 12px 20px; font-size: 14px; color: #555; transition: all 0.2s; border-left: 3px solid transparent; text-decoration: none; }
+    .sidebar-nav a:hover { color: var(--black); background: #f7f7f7; }
+    .sidebar-nav a.active { color: var(--black); font-weight: 700; background: #f7f7f7; border-left-color: var(--accent); }
+    .sidebar-nav .nav-icon { font-size: 16px; flex-shrink: 0; }
+    .sidebar-divider { height: 1px; background: var(--line); margin: 8px 0; }
+    .sidebar-nav a.danger { color: #e53e3e; }
+    .sidebar-logout { padding: 16px 20px; border-top: 1px solid var(--line); }
+    .sidebar-logout button { width: 100%; padding: 10px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 13px; color: #555; background: #fff; cursor: pointer; transition: all 0.2s; }
+    .sidebar-logout button:hover { border-color: var(--black); color: var(--black); }
+
+    /* ── Content ── */
+    .mypage-content { display: flex; flex-direction: column; gap: 20px; }
+    .section-panel { display: none; flex-direction: column; gap: 20px; }
+    .section-panel.active { display: flex; }
+    .my-card { background: #fff; border-radius: 16px; padding: 28px 32px; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .card-title { font-family: var(--font-en); font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+    .card-title-more { font-size: 12px; color: var(--desc-text); font-weight: 500; text-transform: none; font-family: var(--font-ko); cursor: pointer; }
+
     /* Stats */
-    .my-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .stat-item { text-align: center; padding: 20px 12px; background: var(--bg-light); border-radius: var(--radius-input); }
-    .stat-num { font-family: var(--font-en); font-size: 28px; font-weight: 800; color: var(--black); }
+    .my-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat-item { text-align: center; padding: 20px 12px; background: #f7f7f7; border-radius: 12px; }
+    .stat-num { font-family: var(--font-en); font-size: 26px; font-weight: 800; color: var(--black); }
     .stat-label { font-size: 12px; color: var(--desc-text); margin-top: 4px; }
-    /* Order list */
+
+    /* Order items */
     .order-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
     .order-item:last-child { border-bottom: none; }
-    .order-item img { width: 72px; height: 90px; object-fit: cover; border-radius: var(--radius-input); background: var(--bg-light); }
+    .order-item img { width: 72px; height: 90px; object-fit: cover; border-radius: 10px; background: #f0f0f0; }
     .order-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .order-option { font-size: 12px; color: var(--desc-text); }
-    .order-price { font-family: var(--font-en); font-weight: 700; font-size: 15px; }
-    .order-status { font-size: 12px; color: var(--desc-text); margin-top: 4px; }
-    .status-badge { display: inline-block; padding: 4px 10px; border-radius: var(--radius-btn); font-size: 11px; font-weight: 700; font-family: var(--font-en); }
-    .status-complete { background: rgba(56,161,105,0.1); color: #38a169; }
-    .status-shipping { background: rgba(49,130,206,0.1); color: #3182ce; }
-    .status-pending { background: rgba(237,137,54,0.1); color: #dd6b20; }
-    @media(max-width:1024px) { .mypage-layout { grid-template-columns: 1fr; } .mypage-sidebar { display: none; } }
-    @media(max-width:768px) { .my-stats { grid-template-columns: repeat(2, 1fr); } }
+    .order-option { font-size: 12px; color: var(--desc-text); margin-bottom: 4px; }
+    .order-price { font-family: var(--font-en); font-weight: 700; font-size: 14px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .status-complete { background: #e6f7ee; color: #2d7d4f; }
+    .status-shipping { background: #e8f0ff; color: #2b52c7; }
+    .status-pending  { background: #fff4e5; color: #c47600; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--desc-text); }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 16px; }
+    .empty-state p { font-size: 14px; line-height: 1.7; }
+    .empty-state a { color: var(--black); text-decoration: underline; }
+
+    /* Wishlist / recent grid */
+    .product-mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .product-mini-card { text-decoration: none; color: inherit; }
+    .product-mini-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+    .product-mini-card .pm-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .product-mini-card .pm-price { font-size: 13px; color: var(--accent); font-weight: 700; }
+
+    /* Tracking */
+    .tracking-form { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tracking-form input { flex: 1; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 14px; }
+    .tracking-form input:focus { border-color: var(--black); outline: none; }
+    .tracking-result { background: #f7f7f7; border-radius: 12px; padding: 20px 24px; }
+    .tracking-step { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid #eee; align-items: center; }
+    .tracking-step:last-child { border-bottom: none; }
+    .tracking-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); flex-shrink: 0; }
+    .tracking-dot.done { background: var(--accent); }
+    .tracking-step-info { flex: 1; }
+    .tracking-step-label { font-size: 13px; font-weight: 600; }
+    .tracking-step-date { font-size: 12px; color: var(--desc-text); }
+
+    /* Address cards */
+    .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .address-card { border: 1.5px solid var(--line); border-radius: 12px; padding: 20px; position: relative; }
+    .address-card.default { border-color: var(--black); }
+    .address-default-badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; background: var(--black); color: #fff; padding: 3px 8px; border-radius: 999px; }
+    .address-receiver { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .address-phone { font-size: 13px; color: var(--desc-text); margin-bottom: 8px; }
+    .address-addr { font-size: 13px; line-height: 1.6; }
+    .address-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .address-actions button { font-size: 12px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
+    .address-add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; border: 2px dashed var(--line); border-radius: 12px; padding: 40px; color: var(--desc-text); font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .address-add-btn:hover { border-color: var(--black); color: var(--black); }
+
+    /* QnA list */
+    .qna-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .qna-item:last-child { border-bottom: none; }
+    .qna-q { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+    .qna-badge { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+    .qna-badge.q { background: #f0f0f0; color: #555; }
+    .qna-badge.a { background: #e8f0ff; color: #2b52c7; }
+    .qna-text { font-size: 14px; line-height: 1.6; }
+    .qna-meta { font-size: 12px; color: var(--desc-text); margin-top: 4px; }
+    .qna-pending { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; background: #fff4e5; color: #c47600; border-radius: 4px; }
+    .qna-answered { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; background: #e6f7ee; color: #2d7d4f; border-radius: 4px; }
+
+    /* Form */
+    .info-form .form-group { margin-bottom: 20px; }
+    .info-form .form-label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px; }
+    .info-form .form-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 15px; transition: border-color 0.2s; }
+    .info-form .form-input:focus { border-color: var(--black); outline: none; }
+    .info-form .form-input:disabled { background: #f7f7f7; color: var(--desc-text); }
+    .form-hint { font-size: 12px; color: var(--desc-text); margin-top: 6px; }
+    .form-hint.error { color: #e53e3e; }
+    .form-hint.success { color: #38a169; }
+
+    /* Withdraw */
+    .withdraw-warn { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+    .withdraw-warn ul { list-style: disc; padding-left: 20px; font-size: 14px; line-height: 2; color: #c53030; }
+
+    /* Review list */
+    .review-item { display: grid; grid-template-columns: 80px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); align-items: start; }
+    .review-item:last-child { border-bottom: none; }
+    .review-item img { width: 80px; height: 100px; object-fit: cover; border-radius: 10px; }
+    .review-stars { color: #fbbf24; font-size: 14px; margin-bottom: 4px; }
+    .review-product { font-size: 12px; color: var(--desc-text); margin-bottom: 6px; }
+    .review-content { font-size: 14px; line-height: 1.6; }
+    .review-date { font-size: 12px; color: var(--desc-text); margin-top: 6px; }
+
+    /* Responsive */
+    @media(max-width: 1024px) {
+      .mypage-wrap { grid-template-columns: 1fr; }
+      .mypage-sidebar { position: static; display: flex; flex-direction: row; border-radius: 12px; }
+      .sidebar-profile { padding: 16px 20px; text-align: left; flex-shrink: 0; min-width: 160px; }
+      .sidebar-nav { display: flex; overflow-x: auto; padding: 8px; flex: 1; }
+      .sidebar-nav a { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; padding: 8px 12px; }
+      .sidebar-nav a.active { border-left: none; border-bottom-color: var(--accent); }
+      .sidebar-logout { display: none; }
+    }
+    @media(max-width: 768px) {
+      .my-stats { grid-template-columns: repeat(2, 1fr); }
+      .product-mini-grid { grid-template-columns: repeat(2, 1fr); }
+      .address-grid { grid-template-columns: 1fr; }
+      .my-card { padding: 20px; }
+    }
   </style>
 </head>
 <body>
+  <div class="overlay-bg"></div>
+
   <header id="header" class="scrolled">
     <div class="header-inner">
-      <a href="../index.html" class="header-logo"><img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" /></a>
+      <a href="../index.html" class="header-logo">
+        <img src="../images/logo_w.png" alt="RIVANT" class="logo-white" />
+        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" />
+      </a>
+      <nav class="header-nav">
+        <div class="nav-item"><a href="product-list.html?cat=men">Men</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=women">Women</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+        <div class="nav-item"><a href="promotion.html">Promotion</a></div>
+      </nav>
       <div class="header-icons">
-        <a href="cart.html" class="icon-btn" style="color:var(--black)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a>
-        <button class="btn btn-secondary btn-sm" onclick="RivantApp.Auth.signOut()">로그아웃</button>
+        <a href="cart.html" class="icon-btn" aria-label="장바구니">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <button class="mobile-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
 
+  <nav class="mobile-nav" aria-label="모바일 메뉴">
+    <div class="mobile-nav-header">
+      <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+      <button class="mobile-nav-close search-close" aria-label="닫기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav-body">
+      <div class="mobile-nav-item"><a href="product-list.html?cat=men">Men</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=women">Women</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+      <div class="mobile-nav-item"><a href="promotion.html">Promotion</a></div>
+    </div>
+    <div class="mobile-nav-icons">
+      <a href="login.html" class="btn btn-secondary btn-sm">로그인</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">회원가입</a>
+    </div>
+  </nav>
+
   <div class="inner">
-    <div class="mypage-layout">
-      <!-- Sidebar -->
+    <div class="mypage-wrap">
+
+      <!-- ── Sidebar ── -->
       <aside class="mypage-sidebar">
         <div class="sidebar-profile">
           <div class="sidebar-avatar">👤</div>
-          <p class="sidebar-name" id="userName">회원님</p>
-          <p class="sidebar-email" id="userEmail">-</p>
+          <p class="sidebar-name" id="sidebarName">회원님</p>
+          <p class="sidebar-email" id="sidebarEmail">-</p>
         </div>
-        <nav class="sidebar-nav">
-          <a href="#" class="active">회원정보</a>
-          <a href="#">주문내역</a>
-          <a href="#">배송조회</a>
-          <a href="#">찜한 상품</a>
-          <a href="#">최근 본 상품</a>
-          <a href="#">리뷰 관리</a>
-          <a href="#">상품 문의</a>
-          <a href="#">배송지 관리</a>
-          <a href="#">개인정보 수정</a>
-          <a href="#">비밀번호 변경</a>
-          <a href="#" style="color:#e53e3e">회원탈퇴</a>
+        <nav class="sidebar-nav" id="sidebarNav">
+          <a href="#info"      class="nav-link active" data-section="info">      <span class="nav-icon">🏠</span>회원정보</a>
+          <a href="#orders"    class="nav-link" data-section="orders">   <span class="nav-icon">📦</span>주문내역</a>
+          <a href="#tracking"  class="nav-link" data-section="tracking"> <span class="nav-icon">🚚</span>배송조회</a>
+          <div class="sidebar-divider"></div>
+          <a href="#wishlist"  class="nav-link" data-section="wishlist"> <span class="nav-icon">❤️</span>찜한 상품</a>
+          <a href="#recent"    class="nav-link" data-section="recent">   <span class="nav-icon">👁</span>최근 본 상품</a>
+          <div class="sidebar-divider"></div>
+          <a href="#reviews"   class="nav-link" data-section="reviews">  <span class="nav-icon">⭐</span>리뷰 관리</a>
+          <a href="#qna"       class="nav-link" data-section="qna">      <span class="nav-icon">💬</span>상품 문의</a>
+          <div class="sidebar-divider"></div>
+          <a href="#addresses" class="nav-link" data-section="addresses"><span class="nav-icon">📍</span>배송지 관리</a>
+          <a href="#edit-info" class="nav-link" data-section="edit-info"><span class="nav-icon">✏️</span>개인정보 수정</a>
+          <a href="#change-pw" class="nav-link" data-section="change-pw"><span class="nav-icon">🔒</span>비밀번호 변경</a>
+          <div class="sidebar-divider"></div>
+          <a href="#withdraw"  class="nav-link danger" data-section="withdraw"><span class="nav-icon">🚪</span>회원탈퇴</a>
         </nav>
+        <div class="sidebar-logout">
+          <button onclick="RivantApp.Auth.signOut()">로그아웃</button>
+        </div>
       </aside>
 
-      <!-- Content -->
-      <div class="mypage-content">
-        <!-- Stats -->
-        <div class="my-card">
-          <h2 class="my-card-title">My Activity</h2>
-          <div class="my-stats">
-            <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">총 주문</div></div>
-            <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">찜한 상품</div></div>
-            <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">작성 리뷰</div></div>
-            <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">포인트</div></div>
-          </div>
-        </div>
+      <!-- ── Content ── -->
+      <div class="mypage-content" id="mypageContent">
 
-        <!-- Orders -->
-        <div class="my-card">
-          <h2 class="my-card-title">최근 주문내역 <a href="#">전체보기</a></h2>
-          <div class="order-item">
-            <img src="https://picsum.photos/seed/det1/144/180" alt="상품" loading="lazy" />
-            <div>
-              <p class="order-name">Cloud Runner Pro</p>
-              <p class="order-option">Black / 255mm · 1개</p>
-              <p class="order-price">127,200원</p>
-            </div>
-            <div style="text-align:right">
-              <span class="status-badge status-complete">배송완료</span>
-              <p class="order-status" style="margin-top:8px">2026.05.15</p>
+        <!-- 1. 회원정보 -->
+        <div id="section-info" class="section-panel active">
+          <div class="my-card">
+            <h2 class="card-title">My Activity</h2>
+            <div class="my-stats">
+              <div class="stat-item"><div class="stat-num" id="statOrders">0</div><div class="stat-label">총 주문</div></div>
+              <div class="stat-item"><div class="stat-num" id="statWish">0</div><div class="stat-label">찜한 상품</div></div>
+              <div class="stat-item"><div class="stat-num" id="statReviews">0</div><div class="stat-label">작성 리뷰</div></div>
+              <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">포인트</div></div>
             </div>
           </div>
-          <div class="order-item">
-            <img src="https://picsum.photos/seed/new1/144/180" alt="상품" loading="lazy" />
-            <div>
-              <p class="order-name">Motion Flex Training Tee</p>
-              <p class="order-option">White / M · 2개</p>
-              <p class="order-price">68,600원</p>
+          <div class="my-card">
+            <h2 class="card-title">회원 기본정보</h2>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:12px 0;font-size:14px">
+              <span style="color:var(--desc-text);font-weight:600">이름</span><span id="infoName">-</span>
+              <span style="color:var(--desc-text);font-weight:600">이메일</span><span id="infoEmail">-</span>
+              <span style="color:var(--desc-text);font-weight:600">휴대전화</span><span id="infoPhone">-</span>
+              <span style="color:var(--desc-text);font-weight:600">가입일</span><span id="infoJoined">-</span>
             </div>
-            <div style="text-align:right">
-              <span class="status-badge status-shipping">배송중</span>
-              <p class="order-status" style="margin-top:8px">2026.06.01</p>
+          </div>
+          <div class="my-card">
+            <h2 class="card-title">최근 주문내역 <span class="card-title-more" onclick="showSection('orders')">전체보기 →</span></h2>
+            <div id="recentOrders">
+              <div class="empty-state"><div class="empty-icon">📦</div><p>아직 주문 내역이 없습니다.</p></div>
             </div>
           </div>
         </div>
 
-        <!-- Wishlist -->
-        <div class="my-card">
-          <h2 class="my-card-title">찜한 상품 <a href="#">전체보기</a></h2>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
-            <a href="product-detail.html" class="product-card">
-              <div class="product-card__img" style="border-radius:var(--radius-input)"><img src="https://picsum.photos/seed/bs1/300/375" alt="" loading="lazy" /></div>
-              <div class="product-card__info"><p class="product-card__name" style="font-size:13px">Cloud Runner Pro</p><div class="product-card__price"><span class="price-sale" style="font-size:13px">127,200원</span></div></div>
-            </a>
-            <a href="product-detail.html" class="product-card">
-              <div class="product-card__img" style="border-radius:var(--radius-input)"><img src="https://picsum.photos/seed/new3/300/375" alt="" loading="lazy" /></div>
-              <div class="product-card__info"><p class="product-card__name" style="font-size:13px">Ultra Light Knit Jacket</p><div class="product-card__price"><span class="price-sale" style="font-size:13px">90,300원</span></div></div>
-            </a>
+        <!-- 2. 주문내역 -->
+        <div id="section-orders" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">주문내역</h2>
+            <div id="orderList">
+              <div class="empty-state"><div class="empty-icon">📦</div><p>주문 내역이 없습니다.<br><a href="product-list.html">쇼핑하러 가기 →</a></p></div>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- 3. 배송조회 -->
+        <div id="section-tracking" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">배송조회</h2>
+            <p style="font-size:14px;color:var(--desc-text);margin-bottom:20px">운송장 번호를 입력하여 배송 상태를 확인하세요.</p>
+            <div class="tracking-form">
+              <input type="text" id="trackingInput" placeholder="운송장 번호 입력 (예: 1234567890)" />
+              <button class="btn btn-primary" onclick="lookupTracking()">조회</button>
+            </div>
+            <div class="tracking-result" id="trackingResult" style="display:none">
+              <div class="tracking-step">
+                <div class="tracking-dot done"></div>
+                <div class="tracking-step-info">
+                  <div class="tracking-step-label">배송 접수</div>
+                  <div class="tracking-step-date">2026.06.28 09:00</div>
+                </div>
+              </div>
+              <div class="tracking-step">
+                <div class="tracking-dot done"></div>
+                <div class="tracking-step-info">
+                  <div class="tracking-step-label">상품 출고</div>
+                  <div class="tracking-step-date">2026.06.28 14:30</div>
+                </div>
+              </div>
+              <div class="tracking-step">
+                <div class="tracking-dot done"></div>
+                <div class="tracking-step-info">
+                  <div class="tracking-step-label">배송중 — CJ대한통운 도착</div>
+                  <div class="tracking-step-date">2026.06.29 08:15</div>
+                </div>
+              </div>
+              <div class="tracking-step">
+                <div class="tracking-dot"></div>
+                <div class="tracking-step-info">
+                  <div class="tracking-step-label" style="color:var(--desc-text)">배송 완료 (예정)</div>
+                  <div class="tracking-step-date">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 찜한 상품 -->
+        <div id="section-wishlist" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">찜한 상품</h2>
+            <div id="wishlistGrid">
+              <div class="empty-state"><div class="empty-icon">❤️</div><p>아직 찜한 상품이 없습니다.<br><a href="product-list.html">상품 둘러보기 →</a></p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. 최근 본 상품 -->
+        <div id="section-recent" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">최근 본 상품</h2>
+            <div id="recentGrid">
+              <div class="empty-state"><div class="empty-icon">👁</div><p>최근 본 상품이 없습니다.<br><a href="product-list.html">상품 둘러보기 →</a></p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 리뷰 관리 -->
+        <div id="section-reviews" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">리뷰 관리</h2>
+            <div id="reviewList">
+              <div class="empty-state"><div class="empty-icon">⭐</div><p>작성한 리뷰가 없습니다.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. 상품 문의 -->
+        <div id="section-qna" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">상품 문의</h2>
+            <div id="qnaList">
+              <div class="empty-state"><div class="empty-icon">💬</div><p>상품 문의 내역이 없습니다.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. 배송지 관리 -->
+        <div id="section-addresses" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">배송지 관리</h2>
+            <div class="address-grid" id="addressGrid">
+              <div class="address-add-btn" onclick="alert('배송지 추가 기능을 준비 중입니다.')">
+                <span style="font-size:24px">+</span> 새 배송지 추가
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. 개인정보 수정 -->
+        <div id="section-edit-info" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">개인정보 수정</h2>
+            <form class="info-form" id="editInfoForm">
+              <div class="form-group">
+                <label class="form-label">이메일 (변경 불가)</label>
+                <input type="email" class="form-input" id="editEmail" disabled />
+              </div>
+              <div class="form-group">
+                <label class="form-label">이름</label>
+                <input type="text" class="form-input" id="editName" placeholder="이름을 입력하세요" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">휴대전화</label>
+                <input type="tel" class="form-input" id="editPhone" placeholder="010-0000-0000" />
+              </div>
+              <p class="form-hint error" id="editInfoError" style="display:none;margin-bottom:12px"></p>
+              <p class="form-hint success" id="editInfoSuccess" style="display:none;margin-bottom:12px"></p>
+              <button type="submit" class="btn btn-primary">수정 완료</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 10. 비밀번호 변경 -->
+        <div id="section-change-pw" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title">비밀번호 변경</h2>
+            <form class="info-form" id="changePwForm">
+              <div class="form-group">
+                <label class="form-label">새 비밀번호</label>
+                <input type="password" class="form-input" id="newPw" placeholder="8자 이상 입력" />
+                <p class="form-hint" id="newPwHint"></p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">새 비밀번호 확인</label>
+                <input type="password" class="form-input" id="newPwConfirm" placeholder="비밀번호 재입력" />
+                <p class="form-hint" id="newPwConfirmHint"></p>
+              </div>
+              <p class="form-hint error" id="changePwError" style="display:none;margin-bottom:12px"></p>
+              <p class="form-hint success" id="changePwSuccess" style="display:none;margin-bottom:12px"></p>
+              <button type="submit" class="btn btn-primary">비밀번호 변경</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 11. 회원탈퇴 -->
+        <div id="section-withdraw" class="section-panel">
+          <div class="my-card">
+            <h2 class="card-title" style="color:#e53e3e">회원탈퇴</h2>
+            <div class="withdraw-warn">
+              <ul>
+                <li>탈퇴 시 모든 주문·리뷰·찜 내역이 삭제됩니다.</li>
+                <li>보유 포인트 및 혜택이 즉시 소멸됩니다.</li>
+                <li>탈퇴 후 동일 이메일로 30일간 재가입이 제한됩니다.</li>
+                <li>이 작업은 되돌릴 수 없습니다.</li>
+              </ul>
+            </div>
+            <form class="info-form" id="withdrawForm">
+              <div class="form-group">
+                <label class="form-label">탈퇴 확인을 위해 비밀번호를 입력해주세요</label>
+                <input type="password" class="form-input" id="withdrawPw" placeholder="현재 비밀번호 입력" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">탈퇴 사유 (선택)</label>
+                <select class="form-input" id="withdrawReason">
+                  <option value="">선택하세요</option>
+                  <option>더 이상 이용하지 않음</option>
+                  <option>개인정보 보호</option>
+                  <option>서비스 불만족</option>
+                  <option>기타</option>
+                </select>
+              </div>
+              <p class="form-hint error" id="withdrawError" style="display:none;margin-bottom:12px"></p>
+              <button type="submit" class="btn" style="background:#e53e3e;color:#fff;border:none;padding:14px 32px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer">탈퇴하기</button>
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /.mypage-content -->
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../js/config.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/header.js"></script>
   <script>
-    (async () => {
-      const user = await RivantApp.Auth.getUser();
-      if (user) {
-        document.getElementById('userName').textContent = user.user_metadata?.name || '회원님';
-        document.getElementById('userEmail').textContent = user.email || '';
+  (async function () {
+    const { Auth, Cart, supabase: sb } = RivantApp;
+
+    // ── Auth guard ──
+    const user = await Auth.getUser();
+    if (!user) { window.location.href = 'login.html'; return; }
+
+    // ── Fill user info ──
+    const meta = user.user_metadata || {};
+    const name  = meta.name  || meta.full_name || '회원님';
+    const email = user.email || '';
+    document.getElementById('sidebarName').textContent  = name;
+    document.getElementById('sidebarEmail').textContent = email;
+    document.getElementById('infoName').textContent     = name;
+    document.getElementById('infoEmail').textContent    = email;
+    document.getElementById('infoPhone').textContent    = meta.phone || '-';
+    document.getElementById('infoJoined').textContent   = user.created_at ? user.created_at.slice(0,10) : '-';
+    document.getElementById('editEmail').value          = email;
+    document.getElementById('editName').value           = name;
+    document.getElementById('editPhone').value          = meta.phone || '';
+
+    // ── Stats (from localStorage orders + supabase) ──
+    const orders  = JSON.parse(localStorage.getItem('rivant_orders') || '[]');
+    const recent  = JSON.parse(localStorage.getItem('rivant_recent') || '[]');
+    document.getElementById('statOrders').textContent  = orders.length;
+
+    // ── Section navigation ──
+    const panels = document.querySelectorAll('.section-panel');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    function showSection(id) {
+      panels.forEach(p => p.classList.remove('active'));
+      navLinks.forEach(l => l.classList.remove('active'));
+      const panel = document.getElementById('section-' + id);
+      const link  = document.querySelector('[data-section="' + id + '"]');
+      if (panel) panel.classList.add('active');
+      if (link)  link.classList.add('active');
+      window.location.hash = id;
+      loadSection(id);
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        showSection(link.dataset.section);
+      });
+    });
+
+    // Initial section from hash
+    const initHash = (window.location.hash || '#info').replace('#', '');
+    showSection(initHash);
+
+    // ── Section loaders ──
+    const loaded = {};
+    function loadSection(id) {
+      if (loaded[id]) return;
+      loaded[id] = true;
+      if (id === 'orders')    loadOrders();
+      if (id === 'wishlist')  loadWishlist();
+      if (id === 'recent')    loadRecent();
+      if (id === 'reviews')   loadReviews();
+      if (id === 'qna')       loadQna();
+      if (id === 'addresses') loadAddresses();
+    }
+
+    // ── Orders (localStorage) ──
+    function orderItemHTML(item) {
+      const imgs = [
+        'photo-1542291026-7eec264c27ff', 'photo-1571019613454-1cb2f99b2d8b',
+        'photo-1571019613576-96e3f4a5bdd5', 'photo-1595950653106-6c9ebd614d3a',
+        'photo-1526506118085-60ce8714f8c5', 'photo-1564415315949-7a0c4c73aab4',
+      ];
+      const imgUrl = item.image || `https://images.unsplash.com/${imgs[Math.floor(Math.random()*imgs.length)]}?w=144&h=180&fit=crop&auto=format`;
+      const status = item.status || 'complete';
+      const badgeClass = { complete:'status-complete', shipping:'status-shipping', pending:'status-pending' }[status] || 'status-complete';
+      const badgeLabel = { complete:'배송완료', shipping:'배송중', pending:'준비중' }[status] || '완료';
+      return `
+        <div class="order-item">
+          <img src="${imgUrl}" alt="${item.name}" loading="lazy" />
+          <div>
+            <p class="order-name">${item.name}</p>
+            <p class="order-option">${item.option || ''} · ${item.qty || 1}개</p>
+            <p class="order-price">${Number(item.salePrice || item.price || 0).toLocaleString()}원</p>
+          </div>
+          <div style="text-align:right">
+            <span class="status-badge ${badgeClass}">${badgeLabel}</span>
+            <p style="font-size:12px;color:var(--desc-text);margin-top:8px">${item.date || ''}</p>
+          </div>
+        </div>`;
+    }
+
+    function loadOrders() {
+      if (!orders.length) return;
+      const html = orders.map(orderItemHTML).join('');
+      document.getElementById('orderList').innerHTML = html;
+      document.getElementById('recentOrders').innerHTML = orders.slice(0,2).map(orderItemHTML).join('');
+      document.getElementById('statOrders').textContent = orders.length;
+    }
+    if (orders.length) loadOrders();
+
+    // ── Wishlist (Supabase) ──
+    async function loadWishlist() {
+      const el = document.getElementById('wishlistGrid');
+      if (!sb) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">❤️</div><p>로그인 후 이용 가능합니다.</p></div>'; return; }
+      const { data, error } = await sb
+        .from('wishlists')
+        .select('product_id, products(id, name, thumbnail, product_skus(price, sale_price, status))')
+        .limit(12);
+      if (error || !data || !data.length) {
+        el.innerHTML = '<div class="empty-state"><div class="empty-icon">❤️</div><p>아직 찜한 상품이 없습니다.<br><a href="product-list.html">상품 둘러보기 →</a></p></div>';
+        document.getElementById('statWish').textContent = 0;
+        return;
       }
-      document.querySelector('.cart-badge') && (document.querySelector('.cart-badge').style.display = RivantApp.Cart.count() ? 'flex' : 'none');
-      if (document.querySelector('.cart-badge')) document.querySelector('.cart-badge').textContent = RivantApp.Cart.count();
-    })();
+      document.getElementById('statWish').textContent = data.length;
+      el.innerHTML = '<div class="product-mini-grid">' + data.map(w => {
+        const p = w.products;
+        if (!p) return '';
+        const skus = (p.product_skus || []).filter(s => s.status === 'ACTIVE');
+        const price = skus.length ? Math.min(...skus.map(s => s.sale_price || s.price)) : 0;
+        return `<a href="product-detail.html?id=${p.id}" class="product-mini-card">
+          <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" />
+          <div class="pm-name">${p.name}</div>
+          <div class="pm-price">${price.toLocaleString()}원</div>
+        </a>`;
+      }).join('') + '</div>';
+    }
+
+    // ── Recent (localStorage) ──
+    function loadRecent() {
+      const el = document.getElementById('recentGrid');
+      if (!recent.length) return;
+      el.innerHTML = '<div class="product-mini-grid">' + recent.slice(0, 8).map(p =>
+        `<a href="product-detail.html?id=${p.id}" class="product-mini-card">
+          <img src="${p.thumbnail}" alt="${p.name}" loading="lazy" />
+          <div class="pm-name">${p.name}</div>
+          <div class="pm-price">${Number(p.price || 0).toLocaleString()}원</div>
+        </a>`
+      ).join('') + '</div>';
+    }
+
+    // ── Reviews (Supabase) ──
+    async function loadReviews() {
+      const el = document.getElementById('reviewList');
+      if (!sb) return;
+      const { data, error } = await sb
+        .from('reviews')
+        .select('id, rating, content, created_at, products(name, thumbnail)')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (error || !data || !data.length) return;
+      document.getElementById('statReviews').textContent = data.length;
+      el.innerHTML = data.map(r =>
+        `<div class="review-item">
+          <img src="${r.products?.thumbnail || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=100&fit=crop&auto=format'}" alt="" loading="lazy" />
+          <div>
+            <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+            <div class="review-product">${r.products?.name || '상품'}</div>
+            <div class="review-content">${r.content || ''}</div>
+            <div class="review-date">${r.created_at?.slice(0,10) || ''}</div>
+          </div>
+        </div>`
+      ).join('');
+    }
+
+    // ── Q&A (Supabase) ──
+    async function loadQna() {
+      const el = document.getElementById('qnaList');
+      if (!sb) return;
+      const { data, error } = await sb
+        .from('product_questions')
+        .select('id, title, content, status, created_at, products(name), question_answers(content, answered_at)')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (error || !data || !data.length) return;
+      el.innerHTML = data.map(q =>
+        `<div class="qna-item">
+          <div class="qna-q">
+            <span class="qna-badge q">Q</span>
+            <div>
+              <div class="qna-text" style="font-weight:600">${q.title}</div>
+              <div class="qna-text" style="font-size:13px;margin-top:4px">${q.content || ''}</div>
+              <div class="qna-meta">${q.products?.name || ''} · ${q.created_at?.slice(0,10) || ''}
+                ${q.status === 'PENDING' ? '<span class="qna-pending" style="margin-left:8px">답변대기</span>' : '<span class="qna-answered" style="margin-left:8px">답변완료</span>'}
+              </div>
+            </div>
+          </div>
+          ${q.question_answers ? `<div class="qna-q" style="margin-top:8px">
+            <span class="qna-badge a">A</span>
+            <div class="qna-text">${q.question_answers.content || ''}</div>
+          </div>` : ''}
+        </div>`
+      ).join('');
+    }
+
+    // ── Addresses (Supabase) ──
+    async function loadAddresses() {
+      const el = document.getElementById('addressGrid');
+      if (!sb) return;
+      const { data, error } = await sb.from('user_addresses').select('*').limit(10);
+      if (error || !data || !data.length) return;
+      const addBtn = '<div class="address-add-btn" onclick="alert(\'배송지 추가 기능을 준비 중입니다.\')"><span style="font-size:24px">+</span> 새 배송지 추가</div>';
+      el.innerHTML = data.map(a =>
+        `<div class="address-card ${a.is_default ? 'default' : ''}">
+          ${a.is_default ? '<span class="address-default-badge">기본배송지</span>' : ''}
+          <div class="address-receiver">${a.receiver}</div>
+          <div class="address-phone">${a.phone}</div>
+          <div class="address-addr">[${a.zipcode}] ${a.address1} ${a.address2 || ''}</div>
+          <div class="address-actions">
+            <button onclick="alert('수정 기능 준비 중')">수정</button>
+            <button onclick="alert('삭제 기능 준비 중')" style="color:#e53e3e">삭제</button>
+          </div>
+        </div>`
+      ).join('') + addBtn;
+    }
+
+    // ── Tracking ──
+    window.lookupTracking = function() {
+      const val = document.getElementById('trackingInput').value.trim();
+      if (!val) { alert('운송장 번호를 입력해주세요.'); return; }
+      document.getElementById('trackingResult').style.display = 'block';
+    };
+
+    // ── Edit Info ──
+    document.getElementById('editInfoForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errEl = document.getElementById('editInfoError');
+      const sucEl = document.getElementById('editInfoSuccess');
+      errEl.style.display = 'none'; sucEl.style.display = 'none';
+      const newName  = document.getElementById('editName').value.trim();
+      const newPhone = document.getElementById('editPhone').value.trim();
+      if (!newName) { errEl.textContent = '이름을 입력해주세요.'; errEl.style.display = 'block'; return; }
+      const { error } = await sb.auth.updateUser({ data: { name: newName, phone: newPhone } });
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; }
+      else { sucEl.textContent = '정보가 수정되었습니다.'; sucEl.style.display = 'block'; }
+    });
+
+    // ── Change Password ──
+    const newPw = document.getElementById('newPw');
+    const newPwC = document.getElementById('newPwConfirm');
+    newPw.addEventListener('input', () => {
+      const h = document.getElementById('newPwHint');
+      if (newPw.value.length < 8) { h.textContent = '8자 이상 입력해주세요'; h.className = 'form-hint error'; }
+      else { h.textContent = '사용 가능한 비밀번호'; h.className = 'form-hint success'; }
+    });
+    newPwC.addEventListener('input', () => {
+      const h = document.getElementById('newPwConfirmHint');
+      if (newPw.value !== newPwC.value) { h.textContent = '비밀번호가 일치하지 않습니다'; h.className = 'form-hint error'; }
+      else if (newPwC.value) { h.textContent = '일치합니다'; h.className = 'form-hint success'; }
+    });
+    document.getElementById('changePwForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errEl = document.getElementById('changePwError');
+      const sucEl = document.getElementById('changePwSuccess');
+      errEl.style.display = 'none'; sucEl.style.display = 'none';
+      if (newPw.value !== newPwC.value) { errEl.textContent = '비밀번호가 일치하지 않습니다.'; errEl.style.display = 'block'; return; }
+      if (newPw.value.length < 8) { errEl.textContent = '8자 이상 입력해주세요.'; errEl.style.display = 'block'; return; }
+      const { error } = await sb.auth.updateUser({ password: newPw.value });
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; }
+      else { sucEl.textContent = '비밀번호가 변경되었습니다.'; sucEl.style.display = 'block'; newPw.value = ''; newPwC.value = ''; }
+    });
+
+    // ── Withdraw ──
+    document.getElementById('withdrawForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errEl = document.getElementById('withdrawError');
+      errEl.style.display = 'none';
+      if (!confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+      const pw = document.getElementById('withdrawPw').value;
+      if (!pw) { errEl.textContent = '비밀번호를 입력해주세요.'; errEl.style.display = 'block'; return; }
+      const { error: signInErr } = await sb.auth.signInWithPassword({ email, password: pw });
+      if (signInErr) { errEl.textContent = '비밀번호가 올바르지 않습니다.'; errEl.style.display = 'block'; return; }
+      const { error: delErr } = await sb.auth.admin?.deleteUser?.(user.id);
+      if (delErr) { errEl.textContent = '탈퇴 처리 중 오류가 발생했습니다. 고객센터에 문의해주세요.'; errEl.style.display = 'block'; return; }
+      await sb.auth.signOut();
+      alert('회원탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+      window.location.href = '../index.html';
+    });
+
+    // ── Cart badge ──
+    const badge = document.querySelector('.cart-badge');
+    if (badge) { const cnt = Cart.count(); badge.textContent = cnt; badge.style.display = cnt ? 'flex' : 'none'; }
+
+  })();
   </script>
 </body>
 </html>

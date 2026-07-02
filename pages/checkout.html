@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주문/결제 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); background: var(--bg-light); }
+    .page-title { font-size: 28px; font-weight: 800; text-align: center; padding: 40px 0 32px; letter-spacing: -0.02em; }
+    .checkout-layout { display: grid; grid-template-columns: 1fr 380px; gap: 32px; padding-bottom: 80px; align-items: start; }
+    .co-card { background: var(--white); border-radius: 16px; padding: 28px; margin-bottom: 16px; }
+    .co-section-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--sub-text); }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 11px 14px; border: 1.5px solid var(--line); border-radius: var(--radius-input);
+      font-size: 14px; font-family: var(--font-ko); transition: border-color var(--trans-fast);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--black);
+    }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .addr-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px; }
+    .addr-row input { flex: 1; }
+    .addr-row .btn { white-space: nowrap; flex-shrink: 0; }
+    .payment-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .pay-btn { padding: 14px; border: 1.5px solid var(--line); border-radius: var(--radius-input); font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; transition: all var(--trans-fast); }
+    .pay-btn:hover, .pay-btn.active { border-color: var(--black); background: var(--black); color: var(--white); }
+    /* 사이드 요약 */
+    .co-summary { position: sticky; top: calc(var(--header-h) + 24px); background: var(--white); border-radius: 16px; padding: 28px; }
+    .summary-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .order-items { margin-bottom: 20px; max-height: 280px; overflow-y: auto; }
+    .order-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .order-item:last-child { border-bottom: none; }
+    .order-item img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+    .order-item-info { flex: 1; min-width: 0; }
+    .order-item-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .order-item-opt { font-size: 12px; color: var(--desc-text); }
+    .order-item-price { font-family: var(--font-en); font-size: 13px; font-weight: 700; text-align: right; }
+    .summary-rows { border-top: 1px solid var(--line); padding-top: 16px; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
+    .summary-row .val { font-family: var(--font-en); font-weight: 600; }
+    .summary-row.discount .val { color: var(--accent); }
+    .summary-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding-top: 16px; border-top: 1px solid var(--line); }
+    .summary-total .val { font-family: var(--font-en); font-size: 22px; font-weight: 800; }
+    .co-agree { font-size: 13px; color: var(--desc-text); margin-bottom: 20px; line-height: 1.5; }
+    .co-agree a { text-decoration: underline; }
+    .btn-pay { width: 100%; justify-content: center; font-size: 16px; padding: 18px; margin-top: 16px; }
+    @media(max-width:1024px) { .checkout-layout { grid-template-columns: 1fr; } .co-summary { position: static; } }
+    @media(max-width:600px) { .form-row { grid-template-columns: 1fr; } .payment-methods { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="overlay-bg"></div>
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo">
+        <img src="../images/logo_w.png" alt="RIVANT" class="logo-white" />
+        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" />
+      </a>
+      <nav class="header-nav">
+        <div class="nav-item"><a href="product-list.html?cat=men">Men</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=women">Women</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+        <div class="nav-item"><a href="promotion.html">Promotion</a></div>
+        <div class="nav-item"><a href="review.html">Review</a></div>
+      </nav>
+      <div class="header-icons">
+        <a href="cart.html" class="icon-btn" aria-label="장바구니">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <a href="mypage.html" class="icon-btn mypage-link" aria-label="마이페이지" data-mypage="mypage.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <button class="mobile-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" aria-label="모바일 메뉴">
+    <div class="mobile-nav-header">
+      <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+      <button class="mobile-nav-close search-close" aria-label="닫기"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-nav-body">
+      <div class="mobile-nav-item"><a href="product-list.html?cat=men">Men</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=women">Women</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+      <div class="mobile-nav-item"><a href="promotion.html">Promotion</a></div>
+    </div>
+  </nav>
+
+  <main class="inner">
+    <h1 class="page-title">주문/결제</h1>
+
+    <div class="checkout-layout">
+      <!-- 좌측: 주문 정보 폼 -->
+      <div>
+        <!-- 배송지 정보 -->
+        <div class="co-card">
+          <h2 class="co-section-title">배송지 정보</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>받는 분</label>
+              <input type="text" id="recipientName" placeholder="이름" />
+            </div>
+            <div class="form-group">
+              <label>휴대폰</label>
+              <input type="tel" id="recipientPhone" placeholder="010-0000-0000" />
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>우편번호</label>
+              <div class="addr-row">
+                <input type="text" id="addrZip" placeholder="우편번호" readonly style="width:140px;flex:none" />
+                <button class="btn btn-secondary btn-sm" onclick="searchAddr()">주소 검색</button>
+              </div>
+              <input type="text" id="addrMain" placeholder="기본 주소" readonly style="margin-bottom:8px" />
+              <input type="text" id="addrDetail" placeholder="상세 주소 입력" />
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>배송 메모</label>
+              <select id="deliveryMemo" onchange="handleMemo(this)">
+                <option value="">선택 안함</option>
+                <option value="문 앞에 놔주세요">문 앞에 놔주세요</option>
+                <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                <option value="부재시 연락 부탁드립니다">부재시 연락 부탁드립니다</option>
+                <option value="custom">직접 입력</option>
+              </select>
+              <textarea id="deliveryMemoCustom" placeholder="배송 메모를 입력하세요" style="display:none;margin-top:8px"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 쿠폰/포인트 -->
+        <div class="co-card">
+          <h2 class="co-section-title">쿠폰 &amp; 포인트</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>쿠폰</label>
+              <select id="couponSelect">
+                <option value="">쿠폰 선택 안함</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>포인트 (<span id="availPoint">0</span>P 보유)</label>
+              <div class="addr-row">
+                <input type="number" id="usePoint" placeholder="0" min="0" />
+                <button class="btn btn-secondary btn-sm" onclick="useAllPoint()">전액 사용</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 결제 수단 -->
+        <div class="co-card">
+          <h2 class="co-section-title">결제 수단</h2>
+          <div class="payment-methods" id="payMethods">
+            <div class="pay-btn active" data-pay="card" onclick="selectPay(this)">신용카드</div>
+            <div class="pay-btn" data-pay="kakaopay" onclick="selectPay(this)">카카오페이</div>
+            <div class="pay-btn" data-pay="naverpay" onclick="selectPay(this)">네이버페이</div>
+            <div class="pay-btn" data-pay="tosspay" onclick="selectPay(this)">토스페이</div>
+            <div class="pay-btn" data-pay="virtual" onclick="selectPay(this)">가상계좌</div>
+            <div class="pay-btn" data-pay="transfer" onclick="selectPay(this)">무통장입금</div>
+          </div>
+
+          <div id="cardSection">
+            <div class="form-row">
+              <div class="form-group">
+                <label>카드사</label>
+                <select>
+                  <option>신용/체크카드 선택</option>
+                  <option>삼성카드</option><option>신한카드</option><option>현대카드</option>
+                  <option>KB국민카드</option><option>NH농협카드</option><option>롯데카드</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>할부</label>
+                <select>
+                  <option>일시불</option><option>2개월</option><option>3개월</option>
+                  <option>6개월</option><option>12개월</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 우측: 주문 요약 -->
+      <div class="co-summary">
+        <h2 class="summary-title">주문 상품</h2>
+        <div class="order-items" id="orderItems"></div>
+
+        <div class="summary-rows">
+          <div class="summary-row">
+            <span>상품 금액</span>
+            <span class="val" id="sumProduct">0원</span>
+          </div>
+          <div class="summary-row discount">
+            <span>할인 금액</span>
+            <span class="val" id="sumDiscount">-0원</span>
+          </div>
+          <div class="summary-row">
+            <span>배송비</span>
+            <span class="val" id="sumShipping">무료</span>
+          </div>
+          <div class="summary-row">
+            <span>쿠폰 할인</span>
+            <span class="val discount" id="sumCoupon">-0원</span>
+          </div>
+          <div class="summary-row">
+            <span>포인트 사용</span>
+            <span class="val discount" id="sumPoint">-0원</span>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <span>최종 결제금액</span>
+          <span class="val" id="sumFinal">0원</span>
+        </div>
+
+        <p class="co-agree">
+          주문 내용을 확인하였으며 <a href="#">이용약관</a> 및 <a href="#">개인정보 처리방침</a>에 동의합니다.
+        </p>
+        <button class="btn btn-primary btn-pay" onclick="submitOrder()">결제하기</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/header.js"></script>
+  <script>
+  let _payMethod = 'card';
+
+  window.selectPay = function(el) {
+    document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    _payMethod = el.dataset.pay;
+    document.getElementById('cardSection').style.display = _payMethod === 'card' ? '' : 'none';
+  };
+
+  window.handleMemo = function(sel) {
+    const custom = document.getElementById('deliveryMemoCustom');
+    custom.style.display = sel.value === 'custom' ? '' : 'none';
+  };
+
+  window.searchAddr = function() {
+    alert('주소 검색 기능은 실제 서비스 환경에서 카카오 주소 API를 연동하여 사용합니다.');
+  };
+
+  window.useAllPoint = function() {
+    const avail = parseInt(document.getElementById('availPoint').textContent) || 0;
+    document.getElementById('usePoint').value = avail;
+    recalcTotal();
+  };
+
+  function fmt(n) { return Number(n||0).toLocaleString('ko-KR') + '원'; }
+
+  function recalcTotal() {
+    const cart = RivantApp.Cart.get();
+    const prodTotal = cart.reduce((a, i) => a + i.price * i.qty, 0);
+    const saleTotal = cart.reduce((a, i) => a + (i.salePrice || i.price) * i.qty, 0);
+    const discount = prodTotal - saleTotal;
+    const point = Math.min(parseInt(document.getElementById('usePoint').value)||0, saleTotal);
+    const shipping = saleTotal >= 50000 ? 0 : 3000;
+    const final = Math.max(0, saleTotal - point + shipping);
+    document.getElementById('sumProduct').textContent = fmt(prodTotal);
+    document.getElementById('sumDiscount').textContent = discount > 0 ? `-${fmt(discount)}` : `-0원`;
+    document.getElementById('sumShipping').textContent = shipping === 0 ? '무료' : fmt(shipping);
+    document.getElementById('sumPoint').textContent = point > 0 ? `-${fmt(point)}` : `-0원`;
+    document.getElementById('sumFinal').textContent = fmt(final);
+    return { saleTotal, point, shipping, final };
+  }
+
+  function renderOrderItems() {
+    const cart = RivantApp.Cart.get();
+    const el = document.getElementById('orderItems');
+    if (!cart.length) {
+      el.innerHTML = '<p style="text-align:center;color:var(--desc-text);padding:20px">장바구니가 비어있습니다.</p>';
+      return;
+    }
+    el.innerHTML = cart.map(item => `
+      <div class="order-item">
+        <img src="${item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=128&h=128&fit=crop'}"
+             alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=128&h=128&fit=crop'" />
+        <div class="order-item-info">
+          <p class="order-item-name">${item.name}</p>
+          <p class="order-item-opt">${item.option || ''} / 수량 ${item.qty}</p>
+        </div>
+        <div class="order-item-price">${fmt((item.salePrice || item.price) * item.qty)}</div>
+      </div>`).join('');
+  }
+
+  async function prefillUserInfo() {
+    try {
+      const user = await RivantApp.Auth.getUser();
+      if (!user) return;
+      const sb = RivantApp.supabase;
+      if (!sb) return;
+      const { data: u } = await sb.from('users').select('name, phone').eq('id', user.id).single();
+      if (u) {
+        if (u.name) document.getElementById('recipientName').value = u.name;
+        if (u.phone) document.getElementById('recipientPhone').value = u.phone;
+      }
+    } catch (_) {}
+  }
+
+  window.submitOrder = async function() {
+    const name = document.getElementById('recipientName').value.trim();
+    const phone = document.getElementById('recipientPhone').value.trim();
+    const addrMain = document.getElementById('addrMain').value.trim();
+    const addrDetail = document.getElementById('addrDetail').value.trim();
+
+    if (!name) { alert('받는 분 이름을 입력해주세요.'); return; }
+    if (!phone) { alert('휴대폰 번호를 입력해주세요.'); return; }
+    if (!addrMain && !addrDetail) { alert('배송지 주소를 입력해주세요.'); return; }
+
+    const cart = RivantApp.Cart.get();
+    if (!cart.length) { alert('장바구니가 비어있습니다.'); return; }
+
+    const { final } = recalcTotal();
+
+    const btn = document.querySelector('.btn-pay');
+    btn.textContent = '처리 중...';
+    btn.disabled = true;
+
+    try {
+      const sb = RivantApp.supabase;
+      const user = await RivantApp.Auth.getUser();
+
+      let orderId = null;
+      if (sb && user) {
+        const memo = document.getElementById('deliveryMemo').value === 'custom'
+          ? document.getElementById('deliveryMemoCustom').value
+          : document.getElementById('deliveryMemo').value;
+
+        const { data: order, error: oErr } = await sb.from('orders').insert({
+          user_id: user.id,
+          status: 'PENDING',
+          total_amount: final,
+          shipping_name: name,
+          shipping_phone: phone,
+          shipping_address: `${addrMain} ${addrDetail}`.trim(),
+          shipping_memo: memo,
+          payment_method: _payMethod,
+        }).select('id').single();
+
+        if (!oErr && order) {
+          orderId = order.id;
+          for (const item of cart) {
+            await sb.from('order_items').insert({
+              order_id: orderId,
+              product_id: null,
+              sku: item.sku,
+              name: item.name,
+              option: item.option,
+              price: item.salePrice || item.price,
+              qty: item.qty,
+            });
+          }
+        }
+      }
+
+      // 결제 성공 처리
+      RivantApp.Cart.clear();
+      const successMsg = orderId
+        ? `주문이 완료되었습니다!\n주문번호: ${orderId}\n\n감사합니다. RIVANT에서 주문해 주셨습니다.`
+        : `주문이 완료되었습니다!\n\n감사합니다. RIVANT에서 주문해 주셨습니다.`;
+      alert(successMsg);
+      window.location.href = user ? 'mypage.html' : '../index.html';
+
+    } catch (err) {
+      console.error('Order error:', err);
+      alert('주문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      btn.textContent = '결제하기';
+      btn.disabled = false;
+    }
+  };
+
+  // 초기화
+  document.getElementById('usePoint').addEventListener('input', recalcTotal);
+  renderOrderItems();
+  recalcTotal();
+  prefillUserInfo();
+  </script>
+</body>
+</html>

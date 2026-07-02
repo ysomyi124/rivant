@@ -19,6 +19,9 @@
 #header:hover {
   background: var(--white);
   box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+}
+
+#header.scrolled {
   height: var(--header-h-scroll);
 }
 
@@ -446,3 +449,18 @@
 }
 
 .mobile-nav-icons .btn { flex: 1; justify-content: center; }
+
+/* ===========================
+   Sub-page: 항상 흰색 헤더
+=========================== */
+#header.sub-page {
+  background: var(--white);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+}
+#header.sub-page .logo-white { display: none; }
+#header.sub-page .logo-black { display: block; }
+#header.sub-page .nav-item > a { color: var(--black); }
+#header.sub-page .icon-btn { color: var(--black); }
+#header.sub-page .mobile-menu-btn { color: var(--black); }
+#header.sub-page .mega-menu { top: var(--header-h); }
+#header.sub-page.scrolled .mega-menu { top: var(--header-h-scroll); }

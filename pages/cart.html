@@ -57,28 +57,51 @@
   </style>
 </head>
 <body>
-  <!-- HEADER (simplified) -->
+  <div class="overlay-bg"></div>
   <header id="header" class="scrolled">
     <div class="header-inner">
       <a href="../index.html" class="header-logo">
-        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" style="height:24px" />
+        <img src="../images/logo_w.png" alt="RIVANT" class="logo-white" />
+        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" />
       </a>
-      <nav class="header-nav" style="display:flex">
-        <div class="nav-item"><a href="../pages/product-list.html" style="color:var(--black)">Shop</a></div>
-        <div class="nav-item"><a href="../pages/promotion.html" style="color:var(--black)">Promotion</a></div>
-        <div class="nav-item"><a href="../pages/review.html" style="color:var(--black)">Review</a></div>
+      <nav class="header-nav">
+        <div class="nav-item"><a href="product-list.html?cat=men">Men</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=women">Women</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+        <div class="nav-item"><a href="promotion.html">Promotion</a></div>
+        <div class="nav-item"><a href="review.html">Review</a></div>
       </nav>
       <div class="header-icons">
-        <a href="../pages/cart.html" class="icon-btn" style="color:var(--black)">
+        <a href="cart.html" class="icon-btn" aria-label="장바구니">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-badge" style="display:none">0</span>
         </a>
-        <a href="../pages/mypage.html" class="icon-btn" style="color:var(--black)">
+        <a href="mypage.html" class="icon-btn mypage-link" aria-label="마이페이지" data-mypage="mypage.html">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </a>
+        <button class="mobile-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
+
+  <nav class="mobile-nav" aria-label="모바일 메뉴">
+    <div class="mobile-nav-header">
+      <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+      <button class="mobile-nav-close search-close" aria-label="메뉴 닫기"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-nav-body">
+      <div class="mobile-nav-item"><a href="product-list.html?cat=men">Men</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=women">Women</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+      <div class="mobile-nav-item"><a href="promotion.html">Promotion</a></div>
+    </div>
+    <div class="mobile-nav-icons">
+      <a href="login.html" class="btn btn-secondary btn-sm">로그인</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">회원가입</a>
+    </div>
+  </nav>
 
   <main class="inner">
     <div class="page-header">
@@ -132,6 +155,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../js/config.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/header.js"></script>
   <script>
     const { Cart, fmtPrice } = RivantApp;
 
@@ -154,7 +178,7 @@
         <div class="cart-item" data-index="${i}">
           <input type="checkbox" class="item-check" checked />
           <div class="cart-item__img">
-            <img src="${item.image || 'https://picsum.photos/seed/cart'+i+'/240/300'}" alt="${item.name}" loading="lazy" />
+            <img src="${item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=240&h=300&fit=crop&auto=format'}" alt="${item.name}" loading="lazy" />
           </div>
           <div class="cart-item__info">
             <p class="cart-item__name">${item.name || '상품명'}</p>
@@ -216,7 +240,12 @@
       if (confirm('장바구니를 전체 비우시겠습니까?')) { Cart.clear(); renderCart(); }
     }
     function orderAll() {
-      alert('주문 기능은 준비 중입니다.');
+      if (Cart.get().length === 0) { alert('장바구니가 비어있습니다.'); return; }
+      window.location.href = 'checkout.html';
+    }
+
+    if (window.location.hash === '#checkout') {
+      window.addEventListener('load', () => { setTimeout(orderAll, 300); });
     }
 
     // Add demo items if empty
