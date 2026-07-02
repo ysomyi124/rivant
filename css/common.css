@@ -143,9 +143,8 @@ body {
 }
 
 .product-card:hover .product-card__wish { opacity: 1; }
-.product-card__wish.active { color: var(--accent); opacity: 1; }
-.product-card__wish svg { transition: stroke var(--trans); }
-.product-card__wish.active svg { stroke: #ff5112; }
+.product-card__wish svg { stroke: currentColor; fill: none; transition: stroke var(--trans); }
+.product-card__wish.active { color: #ff5112; opacity: 1; }
 
 .product-card__badge {
   position: absolute;
