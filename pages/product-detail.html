@@ -285,24 +285,16 @@
     return 0;
   }
 
-  function updateSelected() {
-    const el = document.getElementById('selectedOptions');
-    const totalEl = document.getElementById('totalPrice');
+  function hideSelectedOption() {
+    document.getElementById('selectedOptions').innerHTML = '';
+    document.getElementById('totalPrice').textContent = '0원';
+  }
 
-    // 필수 옵션이 모두 선택되었을 때만 아이템 표시
-    const colorDone = !_hasColorOpts || _selColorName;
-    const sizeDone  = !_hasSizeOpts  || _selSizeName;
-
-    if (!_product || !colorDone || !sizeDone) {
-      el.innerHTML = '';
-      totalEl.textContent = '0원';
-      return;
-    }
-
+  function renderSelectedOption() {
+    if (!_product) return;
     const unitPrice = currentUnitPrice();
     const optText = [_selColorName, _selSizeName].filter(Boolean).join(' / ');
-
-    el.innerHTML = `
+    document.getElementById('selectedOptions').innerHTML = `
       <div class="selected-item">
         <div style="flex:1;min-width:0">
           <p class="selected-item-name">${_product.name}</p>
@@ -319,7 +311,16 @@
             style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
         </div>
       </div>`;
-    totalEl.textContent = RivantApp.fmtPrice(unitPrice * _qty);
+    document.getElementById('totalPrice').textContent = RivantApp.fmtPrice(unitPrice * _qty);
+  }
+
+  // 데이터 로더에서 호출하는 래퍼 — 둘 다 선택된 경우만 표시
+  function updateSelected() {
+    if (_product && _selColorName && _selSizeName) {
+      renderSelectedOption();
+    } else {
+      hideSelectedOption();
+    }
   }
 
   window.selectColor = function(btn, color, cid) {
@@ -328,7 +329,12 @@
     _selColorName = color;
     _selColorId = cid || null;
     document.getElementById('selectedColorLabel').textContent = color;
-    updateSelected();
+    // 색상만 선택 → 표시 안 함. 색상+사이즈 모두 선택 시만 표시
+    if (_selColorName && _selSizeName) {
+      renderSelectedOption();
+    } else {
+      hideSelectedOption();
+    }
   };
 
   window.selectSize = function(btn, size, sid) {
@@ -337,18 +343,23 @@
     btn.classList.add('active');
     _selSizeName = size;
     _selSizeId = sid || null;
-    updateSelected();
+    // 사이즈만 선택 → 표시 안 함. 색상+사이즈 모두 선택 시만 표시
+    if (_selColorName && _selSizeName) {
+      renderSelectedOption();
+    } else {
+      hideSelectedOption();
+    }
   };
 
   window.clearSelection = function() {
-    _selColorId = null; _selColorName = '';
-    _selSizeId  = null; _selSizeName  = '';
+    _selColorId = null; _selColorName = null;
+    _selSizeId  = null; _selSizeName  = null;
     _qty = 1;
     document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
     const lbl = document.getElementById('selectedColorLabel');
     if (lbl) lbl.textContent = '-';
-    updateSelected();
+    hideSelectedOption();
   };
 
   window.changeQty = function(delta) {
