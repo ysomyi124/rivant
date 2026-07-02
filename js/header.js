@@ -107,22 +107,23 @@
     document.body.style.overflow = '';
   }
 
-  // My Page — route to login if not authenticated
+  // My Page — 로그인 여부에 따라 마이페이지 또는 로그인 페이지로 이동
   const myPageLinks = document.querySelectorAll('.mypage-link');
   myPageLinks.forEach(link => {
     link.addEventListener('click', async (e) => {
       e.preventDefault();
+
+      // 현재 경로 기준으로 로그인 페이지 경로 결정
+      const href = link.getAttribute('href') || '';
+      const isSubPage = href.includes('../') || (!href.includes('pages/') && !href.startsWith('http'));
+      const loginPath = isSubPage ? 'login.html' : 'pages/login.html';
+      const mypagePath = link.dataset.mypage || href;
+
       try {
-        const user = await RivantApp.Auth.getUser();
-        if (user) {
-          window.location.href = link.dataset.mypage || link.getAttribute('href') || 'pages/mypage.html';
-        } else {
-          const href = link.getAttribute('href') || '';
-          const loginHref = href.includes('pages/') ? 'pages/login.html' : (href.includes('../') ? '../pages/login.html' : 'login.html');
-          window.location.href = loginHref;
-        }
+        const user = window.RivantApp ? await RivantApp.Auth.getUser() : null;
+        window.location.href = user ? mypagePath : loginPath;
       } catch (_) {
-        window.location.href = link.getAttribute('href') || 'pages/login.html';
+        window.location.href = loginPath;
       }
     });
   });
