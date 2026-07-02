@@ -137,13 +137,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #000;
   opacity: 0;
   transition: opacity var(--trans), color var(--trans);
   z-index: 2;
 }
 
 .product-card:hover .product-card__wish { opacity: 1; }
-.product-card__wish svg { stroke: currentColor; fill: none; transition: stroke var(--trans); }
+.product-card__wish svg { stroke: currentColor; fill: none; }
 .product-card__wish.active { color: #ff5112; opacity: 1; }
 
 .product-card__badge {
