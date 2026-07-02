@@ -400,63 +400,88 @@
     });
   });
 
-  // ── Supabase 데이터 로드 ──
+  // ── REST API 직접 데이터 로드 (SDK 불필요) ──
   (async function () {
-    const { Cart, fmtPrice, supabase: sb } = RivantApp;
+    const _SB_URL = 'https://icpadkshsayuzpgiaojh.supabase.co';
+    const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcGFka3Noc2F5dXpwZ2lhb2poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjU5NzMsImV4cCI6MjA5NjgwMTk3M30.0dn3CqhajZecDVGUSX6tKo6JnCKYLPUBkon9eUPs6Dc';
+    const _H = { apikey: _SB_KEY, Authorization: 'Bearer ' + _SB_KEY };
+
+    async function sbGet(table, params) {
+      const url = new URL(_SB_URL + '/rest/v1/' + table);
+      Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
+      const r = await fetch(url.toString(), { headers: _H });
+      if (!r.ok) throw new Error(table + ' ' + r.status + ': ' + await r.text());
+      return r.json();
+    }
+
     const pid = new URLSearchParams(location.search).get('id') || '1';
 
-    if (!sb) return; // Supabase 없으면 정적 UI로 동작
-
     try {
-      const { data: p, error } = await sb
-        .from('products')
-        .select(`
-          id, name, summary, thumbnail,
-          brands(name),
-          categories(name),
-          product_images(image_url, type, sort_order),
-          product_options(id, name, product_option_values(id, value, sort_order)),
-          product_skus(id, color_id, size_id, price, sale_price, sku, status),
-          product_descriptions(content_html),
-          products_statistics(review_count, review_average, wish_count)
-        `)
-        .eq('id', pid)
-        .single();
+      // 상품 핵심 데이터를 병렬 fetch
+      const [products, skus, options, images, descs, stats] = await Promise.all([
+        sbGet('products', { id: 'eq.'+pid, select: 'id,name,summary,thumbnail,brand_id', limit: '1' }),
+        sbGet('product_skus', { product_id: 'eq.'+pid, select: 'id,color_id,size_id,price,sale_price,sku,status' }),
+        sbGet('product_options', { product_id: 'eq.'+pid, select: 'id,name' }),
+        sbGet('product_images', { product_id: 'eq.'+pid, select: 'image_url,type,sort_order', order: 'sort_order' }),
+        sbGet('product_descriptions', { product_id: 'eq.'+pid, select: 'content_html', limit: '1' }),
+        sbGet('products_statistics', { product_id: 'eq.'+pid, select: 'review_count,review_average,wish_count', limit: '1' }),
+      ]);
 
-      if (error || !p) {
+      const p = products[0];
+      if (!p) {
         document.getElementById('detailName').textContent = '상품을 찾을 수 없습니다.';
         return;
       }
 
+      // 브랜드명 fetch
+      let brandName = '';
+      if (p.brand_id) {
+        try {
+          const brands = await sbGet('brands', { id: 'eq.'+p.brand_id, select: 'name', limit: '1' });
+          brandName = brands[0]?.name || '';
+        } catch {}
+      }
+
+      // 옵션 값 fetch
+      let optionValues = [];
+      if (options.length > 0) {
+        try {
+          const optIds = options.map(o => o.id).join(',');
+          optionValues = await sbGet('product_option_values', {
+            option_id: 'in.('+optIds+')',
+            select: 'id,option_id,value,sort_order',
+            order: 'sort_order'
+          });
+        } catch {}
+      }
+      options.forEach(opt => {
+        opt.product_option_values = optionValues.filter(v => v.option_id === opt.id);
+      });
+
       _product = p;
 
-      // 제목·빵 부스러기
+      // 제목·브레드크럼
       document.title = `${p.name} — RIVANT`;
       document.getElementById('breadName').textContent = p.name;
       document.getElementById('detailName').textContent = p.name;
       document.getElementById('detailSummary').textContent = p.summary || '';
-      if (p.brands?.name) document.getElementById('detailBrand').textContent = p.brands.name;
+      if (brandName) document.getElementById('detailBrand').textContent = brandName;
 
       // 이미지
-      const imgs = (p.product_images || []).sort((a,b) => a.sort_order - b.sort_order);
-      const imgGrid = document.getElementById('detailImages');
       const defaultImgs = [
         'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop&auto=format',
         'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&h=800&fit=crop&auto=format',
         'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=800&fit=crop&auto=format',
         'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&h=800&fit=crop&auto=format',
       ];
-      const imgList = imgs.length >= 4
-        ? imgs.slice(0,4)
-        : [...imgs, ...defaultImgs.slice(imgs.length)].slice(0,4);
-      imgGrid.innerHTML = imgList.map((img, i) => {
+      const imgList = images.length >= 4 ? images.slice(0,4) : [...images, ...defaultImgs.slice(images.length)].slice(0,4);
+      document.getElementById('detailImages').innerHTML = imgList.map((img, i) => {
         const url = typeof img === 'string' ? img : (img.image_url || defaultImgs[i]);
-        return `<img src="${url}" alt="상품 이미지 ${i+1}"
-                     onerror="this.src='${defaultImgs[i % 4]}'" />`;
+        return `<img src="${url}" alt="상품 이미지 ${i+1}" onerror="this.src='${defaultImgs[i % 4]}'" />`;
       }).join('');
 
       // 통계
-      const st = p.products_statistics;
+      const st = stats[0];
       if (st) {
         const avg = Number(st.review_average || 0).toFixed(1);
         const cnt = Number(st.review_count || 0);
@@ -473,7 +498,7 @@
       }
 
       // 가격
-      _activeSkus = (p.product_skus || []).filter(s => s.status === 'ACTIVE');
+      _activeSkus = skus.filter(s => s.status === 'ACTIVE');
       if (_activeSkus.length > 0) {
         const prices = _activeSkus.map(s => s.sale_price || s.price);
         const origPrices = _activeSkus.map(s => s.price);
@@ -496,8 +521,8 @@
       }
 
       // 옵션 파싱
-      const colorOpt = (p.product_options || []).find(o => o.name === '색상');
-      const sizeOpt  = (p.product_options || []).find(o => o.name === '사이즈');
+      const colorOpt = options.find(o => o.name === '색상');
+      const sizeOpt  = options.find(o => o.name === '사이즈');
       const colorVals = (colorOpt?.product_option_values || []).sort((a,b) => a.sort_order - b.sort_order);
       const sizeVals  = (sizeOpt?.product_option_values  || []).sort((a,b) => a.sort_order - b.sort_order);
 
@@ -529,60 +554,55 @@
       }
 
       // 상품 상세설명
-      if (p.product_descriptions?.content_html) {
-        document.getElementById('tabInfoContent').innerHTML = p.product_descriptions.content_html;
-      }
-
-      // 리뷰 로드
-      const { data: reviews } = await sb
-        .from('reviews')
-        .select('id, rating, content, created_at, review_images(image_url)')
-        .eq('product_id', pid)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (reviews && reviews.length > 0) {
-        document.getElementById('reviewList').innerHTML = reviews.map(r => `
-          <div class="review-card">
-            <div style="flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:16px">👤</div></div>
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-                <span style="font-weight:600">고객</span>
-                <span style="color:#fbbf24">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
-                <span style="font-size:12px;color:var(--desc-text)">${(r.created_at||'').slice(0,10)}</span>
-              </div>
-              <p style="font-size:14px;line-height:1.7;color:var(--sub-text)">${r.content||''}</p>
-              ${(r.review_images||[]).length > 0 ? `<div class="review-imgs">
-                ${r.review_images.map(img => `<img src="${img.image_url}" alt="리뷰 이미지" loading="lazy" onerror="this.style.display='none'" />`).join('')}
-              </div>` : ''}
-            </div>
-          </div>`).join('');
-      }
-
-      // Q&A 로드
-      const { data: qnas } = await sb
-        .from('product_questions')
-        .select('id, title, content, status, created_at, question_answers(content)')
-        .eq('product_id', pid)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (qnas && qnas.length > 0) {
-        document.getElementById('reviewTabBtn').nextElementSibling?.setAttribute?.('data-count', qnas.length);
-        document.querySelector('[data-tab="tab-qna"]').textContent = `Q&A (${qnas.length})`;
-        document.getElementById('qnaList').innerHTML = qnas.map(q => `
-          <div class="qna-item">
-            <div class="q"><span style="color:var(--accent);font-weight:700">Q</span> ${q.title}</div>
-            ${q.content ? `<p style="font-size:13px;color:var(--desc-text);padding-left:18px;margin-top:4px">${q.content}</p>` : ''}
-            ${q.question_answers?.content ? `<div class="a" style="margin-top:10px"><span style="color:var(--black);font-weight:700">A</span> ${q.question_answers.content}</div>` : `<div style="padding-left:18px;margin-top:8px"><span style="font-size:11px;background:#fff4e5;color:#c47600;padding:2px 8px;border-radius:4px;font-weight:700">답변대기</span></div>`}
-          </div>`).join('');
+      if (descs[0]?.content_html) {
+        document.getElementById('tabInfoContent').innerHTML = descs[0].content_html;
       }
 
       // 초기 선택 상태 표시
       updateSelected();
 
+      // 리뷰 로드 (실패해도 메인 렌더링에 영향 없음)
+      try {
+        const reviews = await sbGet('reviews', {
+          product_id: 'eq.'+pid, select: 'id,rating,content,created_at',
+          order: 'created_at.desc', limit: '10'
+        });
+        if (reviews && reviews.length > 0) {
+          document.getElementById('reviewList').innerHTML = reviews.map(r => `
+            <div class="review-card">
+              <div style="flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:16px">👤</div></div>
+              <div style="flex:1">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                  <span style="font-weight:600">고객</span>
+                  <span style="color:#fbbf24">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+                  <span style="font-size:12px;color:var(--desc-text)">${(r.created_at||'').slice(0,10)}</span>
+                </div>
+                <p style="font-size:14px;line-height:1.7;color:var(--sub-text)">${r.content||''}</p>
+              </div>
+            </div>`).join('');
+        }
+      } catch {}
+
+      // Q&A 로드 (실패해도 메인 렌더링에 영향 없음)
+      try {
+        const qnas = await sbGet('product_questions', {
+          product_id: 'eq.'+pid, select: 'id,title,content,status,created_at',
+          order: 'created_at.desc', limit: '10'
+        });
+        if (qnas && qnas.length > 0) {
+          document.querySelector('[data-tab="tab-qna"]').textContent = `Q&A (${qnas.length})`;
+          document.getElementById('qnaList').innerHTML = qnas.map(q => `
+            <div class="qna-item">
+              <div class="q"><span style="color:var(--accent);font-weight:700">Q</span> ${q.title}</div>
+              ${q.content ? `<p style="font-size:13px;color:var(--desc-text);padding-left:18px;margin-top:4px">${q.content}</p>` : ''}
+              <div style="padding-left:18px;margin-top:8px"><span style="font-size:11px;background:#fff4e5;color:#c47600;padding:2px 8px;border-radius:4px;font-weight:700">답변대기</span></div>
+            </div>`).join('');
+        }
+      } catch {}
+
     } catch (err) {
       console.error('Detail load error:', err);
+      document.getElementById('detailName').textContent = '상품 정보를 불러올 수 없습니다.';
     }
   })();
   </script>
