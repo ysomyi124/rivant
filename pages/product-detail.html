@@ -384,11 +384,18 @@
   };
 
   window.addToCart = function() {
+    console.log('[CART CLICK]');
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
     if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
       alert('옵션을 선택해주세요.'); return;
     }
     const sku = getCurrentSku();
+    console.log('[ADD CART DATA]', {
+      productId: _product.id,
+      color: _selColorName,
+      size: _selSizeName,
+      qty: _qty
+    });
     RivantApp.Cart.add({
       sku: sku?.sku || `${_product.id}-${_selColorName}-${_selSizeName}`,
       name: _product.name,
@@ -403,11 +410,18 @@
   };
 
   window.buyNow = function() {
+    console.log('[BUY NOW CLICK]');
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
     if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
       alert('옵션을 선택해주세요.'); return;
     }
     const sku = getCurrentSku();
+    console.log('[GO CHECKOUT]', {
+      productId: _product.id,
+      color: _selColorName,
+      size: _selSizeName,
+      qty: _qty
+    });
     RivantApp.Cart.add({
       sku: sku?.sku || `${_product.id}-${_selColorName}-${_selSizeName}`,
       name: _product.name,
