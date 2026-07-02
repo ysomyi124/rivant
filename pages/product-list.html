@@ -153,162 +153,153 @@
   <script src="../js/header.js"></script>
   <script>
   (async function () {
+    const grid = document.getElementById('productGrid');
     const params = new URLSearchParams(location.search);
-    const cat = params.get('cat') || 'all';
+    const cat = (params.get('cat') || 'all').toLowerCase();
 
     const catMap = {
       men:      { title: 'Men',          subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '남성' },
       women:    { title: 'Women',        subs: ['All Item','T-Shirts','Knit','Pants','Outer','Shoes','ACC'], dbName: '여성' },
       shoes:    { title: 'Shoes',        subs: ['All Item','Running','Training','Lifestyle','Outdoor'],       dbName: '신발' },
-      acc:      { title: 'ACC',          subs: ['All Item','Bag','Cap','Socks','Accessories'],               dbName: '액세서리' },
-      running:  { title: 'Running',      subs: ['All Item'],  dbName: null },
-      training: { title: 'Training',     subs: ['All Item'],  dbName: null },
-      outdoor:  { title: 'Outdoor',      subs: ['All Item'],  dbName: null },
-      all:      { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'] },
+      acc:      { title: 'ACC',          subs: ['All Item','Bag','Cap','Socks'],                             dbName: '액세서리' },
+      all:      { title: 'All Products', subs: ['All Item','Men','Women','Shoes','ACC'],                     dbName: null },
     };
 
     const info = catMap[cat] || catMap.all;
     document.getElementById('catTitle').textContent = info.title;
     document.getElementById('subCats').innerHTML = info.subs.map((s, i) =>
-      `<span class="sub-cat ${i===0?'active':''}" onclick="
-        this.parentElement.querySelectorAll('.sub-cat').forEach(el=>el.classList.remove('active'));
+      `<span class="sub-cat ${i === 0 ? 'active' : ''}" onclick="
+        this.parentElement.querySelectorAll('.sub-cat').forEach(el => el.classList.remove('active'));
         this.classList.add('active')">${s}</span>`
     ).join('');
 
-    const grid = document.getElementById('productGrid');
-
-    // Supabase 클라이언트 확인
-    const sb = window.RivantApp?.supabase;
+    // ── Supabase 클라이언트 확보 ──
+    // RivantApp.supabase가 없으면 직접 생성 (main.js 초기화 실패 대비)
+    let sb = window.RivantApp?.supabase;
+    if (!sb && window.supabase?.createClient) {
+      try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (_) {}
+    }
     if (!sb) {
-      grid.innerHTML = `<p class="empty-msg">상품을 불러올 수 없습니다. (네트워크 오류)<br><a href="product-list.html">새로고침</a></p>`;
+      grid.innerHTML = `<p class="empty-msg">Supabase를 불러올 수 없습니다.<br><a href="javascript:location.reload()">새로고침</a></p>`;
       return;
     }
 
     try {
-      // 카테고리 ID 목록 결정
+      // ── 1. 카테고리 ID 목록 ──
       let catIds = null;
       if (info.dbName) {
-        const { data: topCats, error: catErr } = await sb
-          .from('categories')
-          .select('id')
-          .eq('name', info.dbName)
-          .is('parent_id', null);
+        const { data: topCats } = await sb
+          .from('categories').select('id')
+          .eq('name', info.dbName).is('parent_id', null);
 
-        if (!catErr && topCats && topCats.length > 0) {
+        if (topCats?.length > 0) {
           const topId = topCats[0].id;
           const { data: subCats } = await sb
-            .from('categories')
-            .select('id')
-            .eq('parent_id', topId);
+            .from('categories').select('id').eq('parent_id', topId);
           catIds = [topId, ...(subCats || []).map(c => c.id)];
         }
       }
 
-      // 상품 조회
-      let query = sb.from('products')
-        .select('id, name, thumbnail, brand_id, brands(name), product_skus(price, sale_price, status)')
+      // ── 2. 상품 목록 조회 (조인 없이 단순 쿼리) ──
+      let q = sb.from('products')
+        .select('id, name, thumbnail, brand_id, category_id')
         .eq('status', 'ACTIVE');
+      if (catIds?.length > 0) q = q.in('category_id', catIds);
+      const { data: products, error: pErr } = await q.order('id', { ascending: false }).limit(48);
 
-      if (catIds && catIds.length > 0) {
-        query = query.in('category_id', catIds);
-      }
-
-      const { data: rows, error } = await query
-        .order('id', { ascending: false })
-        .limit(48);
-
-      if (error) {
-        console.error('Product query error:', error);
-        // brands join 없이 재시도
-        let q2 = sb.from('products')
-          .select('id, name, thumbnail, product_skus(price, sale_price, status)')
-          .eq('status', 'ACTIVE');
-        if (catIds && catIds.length > 0) q2 = q2.in('category_id', catIds);
-        const { data: rows2, error: err2 } = await q2.order('id', { ascending: false }).limit(48);
-        if (err2 || !rows2 || rows2.length === 0) {
-          grid.innerHTML = `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
-          return;
-        }
-        renderProductList(rows2, false);
-        return;
-      }
-
-      if (!rows || rows.length === 0) {
+      if (pErr) throw new Error('상품 조회 실패: ' + pErr.message);
+      if (!products || products.length === 0) {
         grid.innerHTML = `<p class="empty-msg">해당 카테고리에 상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
         document.getElementById('prodCount').textContent = 0;
         return;
       }
 
-      renderProductList(rows, true);
+      // ── 3. SKU 가격 조회 (별도 쿼리로 분리) ──
+      const pIds = products.map(p => p.id);
+      const { data: skus } = await sb
+        .from('product_skus').select('product_id, price, sale_price, status')
+        .in('product_id', pIds);
+
+      // ── 4. 브랜드명 조회 ──
+      const bIds = [...new Set(products.map(p => p.brand_id).filter(Boolean))];
+      let brandMap = {};
+      if (bIds.length > 0) {
+        const { data: brands } = await sb.from('brands').select('id, name').in('id', bIds);
+        (brands || []).forEach(b => { brandMap[b.id] = b.name; });
+      }
+
+      // ── 5. 데이터 병합 ──
+      const merged = products.map(p => ({
+        ...p,
+        brandName: brandMap[p.brand_id] || '',
+        skuList: (skus || []).filter(s => s.product_id === p.id && s.status === 'ACTIVE'),
+      }));
+
+      renderAll(merged);
 
     } catch (err) {
-      console.error('Product list error:', err);
-      grid.innerHTML = `<p class="empty-msg">상품을 불러오는 중 오류가 발생했습니다.<br><a href="product-list.html">새로고침</a></p>`;
+      console.error('[product-list] error:', err);
+      grid.innerHTML = `<p class="empty-msg">상품을 불러오는 중 오류가 발생했습니다.<br><small style="color:#aaa">${err.message}</small><br><a href="javascript:location.reload()">새로고침</a></p>`;
     }
 
-    function processProducts(rows) {
-      return rows.map(p => {
-        const skus = (p.product_skus || []).filter(s => s.status === 'ACTIVE');
-        const salePrices = skus.map(s => s.sale_price || s.price).filter(Boolean);
-        const origPrices = skus.map(s => s.price).filter(Boolean);
-        const minSale = salePrices.length ? Math.min(...salePrices) : 0;
-        const minOrig = origPrices.length ? Math.min(...origPrices) : 0;
-        const hasSale = skus.some(s => s.sale_price && s.sale_price < s.price);
-        const rate = hasSale && minOrig > 0 ? Math.round((1 - minSale / minOrig) * 100) : 0;
-        return { ...p, minSale, minOrig, hasSale, rate };
-      });
+    // ── 헬퍼 ──
+    let _allItems = [];
+
+    function calcPrice(skuList) {
+      if (!skuList.length) return { minSale: 0, minOrig: 0, hasSale: false, rate: 0 };
+      const salePrices = skuList.map(s => s.sale_price || s.price).filter(Boolean);
+      const origPrices = skuList.map(s => s.price).filter(Boolean);
+      const minSale = salePrices.length ? Math.min(...salePrices) : 0;
+      const minOrig = origPrices.length ? Math.min(...origPrices) : 0;
+      const hasSale = skuList.some(s => s.sale_price && s.sale_price < s.price);
+      const rate = hasSale && minOrig > 0 ? Math.round((1 - minSale / minOrig) * 100) : 0;
+      return { minSale, minOrig, hasSale, rate };
     }
 
-    function productCardHTML(p, withBrand) {
-      const brand = withBrand ? (p.brands?.name || '') : '';
+    function cardHTML(p) {
+      const { minSale, minOrig, hasSale, rate } = calcPrice(p.skuList);
+      const fallback = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop';
+      const thumb = p.thumbnail || fallback;
       return `
         <a href="product-detail.html?id=${p.id}" class="product-card">
           <div class="product-card__img">
-            <img src="${p.thumbnail || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=500&fit=crop'}"
-                 alt="${p.name}" class="img-main" loading="lazy"
-                 onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop'" />
-            <img src="${p.thumbnail || ''}" alt="" class="img-hover" loading="lazy"
-                 onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop'" />
+            <img src="${thumb}" alt="${p.name}" class="img-main" loading="lazy" onerror="this.src='${fallback}'" />
+            <img src="${thumb}" alt="" class="img-hover" loading="lazy" onerror="this.src='${fallback}'" />
             <button class="product-card__wish" onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </button>
           </div>
           <div class="product-card__info">
-            ${brand ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${brand}</p>` : ''}
+            ${p.brandName ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${p.brandName}</p>` : ''}
             <p class="product-card__name">${p.name}</p>
             <div class="product-card__price">
-              ${p.hasSale ? `<span class="price-original">${p.minOrig.toLocaleString()}원</span>` : ''}
-              <span class="price-sale">${p.minSale > 0 ? p.minSale.toLocaleString() + '원' : '-'}</span>
-              ${p.rate > 0 ? `<span class="price-rate">${p.rate}%</span>` : ''}
+              ${hasSale ? `<span class="price-original">${minOrig.toLocaleString()}원</span>` : ''}
+              <span class="price-sale">${minSale > 0 ? minSale.toLocaleString() + '원' : '가격 문의'}</span>
+              ${rate > 0 ? `<span class="price-rate">${rate}%</span>` : ''}
             </div>
           </div>
         </a>`;
     }
 
-    let allProcessed = [];
-
-    function renderProductList(rows, withBrand) {
-      allProcessed = processProducts(rows);
-      document.getElementById('prodCount').textContent = allProcessed.length;
-      renderGrid(allProcessed, withBrand);
+    function renderGrid(list) {
+      document.getElementById('prodCount').textContent = list.length;
+      grid.innerHTML = list.length
+        ? list.map(cardHTML).join('')
+        : `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
     }
 
-    function renderGrid(list, withBrand = true) {
-      if (!list.length) {
-        grid.innerHTML = `<p class="empty-msg">상품이 없습니다.<br><a href="product-list.html">전체 상품 보기 →</a></p>`;
-        return;
-      }
-      grid.innerHTML = list.map(p => productCardHTML(p, withBrand)).join('');
+    function renderAll(list) {
+      _allItems = list.map(p => ({ ...p, ...calcPrice(p.skuList) }));
+      renderGrid(_allItems);
     }
 
-    // 정렬
-    document.getElementById('sortSelect').addEventListener('change', (e) => {
+    document.getElementById('sortSelect').addEventListener('change', e => {
       const val = e.target.value;
-      const sorted = [...allProcessed];
-      if (val === 'low')     sorted.sort((a,b) => a.minSale - b.minSale);
-      else if (val === 'high')    sorted.sort((a,b) => b.minSale - a.minSale);
-      else if (val === 'popular') sorted.sort((a,b) => (b.minSale > 0 ? 1 : 0) - (a.minSale > 0 ? 1 : 0));
-      renderGrid(sorted, true);
+      const sorted = [..._allItems];
+      if      (val === 'low')     sorted.sort((a, b) => a.minSale - b.minSale);
+      else if (val === 'high')    sorted.sort((a, b) => b.minSale - a.minSale);
+      else if (val === 'popular') sorted.sort((a, b) => b.rate - a.rate);
+      renderGrid(sorted);
     });
 
   })();
