@@ -91,21 +91,64 @@
     const errorMsg = document.getElementById('errorMsg');
     const loginBtn = document.getElementById('loginBtn');
 
+    let _submitting = false;
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      // 중복 제출 완전 차단
+      if (_submitting) {
+        console.warn('[로그인] 중복 요청 차단됨');
+        return;
+      }
+
       errorMsg.classList.remove('show');
+
+      // await 이전 동기 영역에서 잠금 — 두 번째 이벤트가 체크할 때 이미 true
+      _submitting = true;
       loginBtn.textContent = '로그인 중...';
       loginBtn.disabled = true;
 
+      const email    = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      console.log('[로그인 요청]', { email, passwordLength: password.length });
+
       try {
-        await RivantApp.Auth.signIn(
-          document.getElementById('email').value.trim(),
-          document.getElementById('password').value
-        );
-        window.location.href = '../index.html';
+        const result = await RivantApp.Auth.signIn(email, password);
+        console.log('[로그인 성공]', result);
+
+        // 로그인 성공 = 이메일 인증 완료 → 재가입 차단 해제
+        sessionStorage.removeItem('rivant_pending_email');
+
+        // 이전 페이지가 있으면 돌아가고, 없으면 메인으로
+        const from = new URLSearchParams(location.search).get('from');
+        window.location.href = from ? decodeURIComponent(from) : '../index.html';
+
       } catch (err) {
-        errorMsg.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        console.error('[로그인 실패] error:', err);
+        console.error('[로그인 실패] message:', err.message);
+        console.error('[로그인 실패] code:', err.code || err.status);
+
+        const code    = err.code    || '';
+        const message = err.message || '';
+        let msg;
+
+        if (code === 'email_not_confirmed' || message === 'Email not confirmed') {
+          msg = '이메일 인증이 완료되지 않았습니다. 가입 시 발송된 인증 메일을 확인해주세요.\n\n※ 메일이 없으면 스팸함을 확인해주세요.';
+        } else if (code === 'invalid_credentials' || message === 'Invalid login credentials') {
+          msg = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        } else if (code === 'over_request_rate_limit' || message.toLowerCase().includes('rate limit')) {
+          msg = '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+        } else if (message === 'Supabase not initialized') {
+          msg = '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
+        } else {
+          msg = message || '로그인 중 오류가 발생했습니다.';
+        }
+
+        errorMsg.textContent = msg;
         errorMsg.classList.add('show');
+        // 실패 시에만 잠금 해제 (성공 시 페이지 이동하므로 불필요)
+        _submitting = false;
         loginBtn.textContent = '로그인';
         loginBtn.disabled = false;
       }

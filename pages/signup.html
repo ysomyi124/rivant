@@ -151,32 +151,113 @@
       else if (pwC.value) { hint.textContent = '비밀번호가 일치합니다'; hint.className = 'form-hint success'; }
     });
 
-    // Submit
+    // ─── 회원가입 Submit 핸들러 ───────────────────────────────────────────
+    //
+    // 이메일 rate limit 방어 3단계:
+    //   A. _submitting 플래그  → 현재 요청 진행 중 재클릭 차단 (in-memory)
+    //   B. sessionStorage      → 같은 브라우저 세션에서 이미 가입 완료된 이메일 재시도 차단
+    //   C. main.js identities  → 서버에서 이미 가입된 이메일 감지 (최후 방어선)
+    //
+    // Email Confirmation 설정별 동작:
+    //   OFF (개발 권장): result.session 존재 → 즉시 로그인 → 메인으로 이동
+    //   ON  (운영):      result.session null  → 인증 메일 발송 → 로그인 페이지로 이동
+    //
+    const PENDING_EMAIL_KEY = 'rivant_pending_email';
+
+    let _submitting = false;
+    let _reqCount   = 0;
+
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const errEl = document.getElementById('submitError');
-      errEl.style.display = 'none';
-      const btn = document.getElementById('signupBtn');
 
-      if (pw.value !== pwC.value) { errEl.textContent = '비밀번호가 일치하지 않습니다.'; errEl.style.display = 'block'; return; }
-      if (!document.getElementById('termsService').checked || !document.getElementById('termsPrivacy').checked) {
-        errEl.textContent = '필수 약관에 동의해주세요.'; errEl.style.display = 'block'; return;
+      // A. 진행 중인 요청 차단 (더블클릭·연속 제출 방지)
+      if (_submitting) {
+        console.warn('[회원가입] 중복 요청 차단 — 현재 요청 처리 중');
+        return;
       }
 
-      btn.textContent = '가입 중...'; btn.disabled = true;
+      const errEl = document.getElementById('submitError');
+      const btn   = document.getElementById('signupBtn');
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      errEl.style.display = 'none';
+
+      // 유효성 검사
+      if (pw.value !== pwC.value) {
+        errEl.textContent = '비밀번호가 일치하지 않습니다.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (!document.getElementById('termsService').checked || !document.getElementById('termsPrivacy').checked) {
+        errEl.textContent = '필수 약관에 동의해주세요.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // B. 이미 인증 메일이 발송된 이메일 — API 호출 없이 즉시 차단
+      if (sessionStorage.getItem(PENDING_EMAIL_KEY) === email) {
+        errEl.textContent = '이미 인증 메일이 발송된 이메일입니다. 받은 메일함(또는 스팸함)을 확인하거나 로그인 페이지로 이동해주세요.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // 잠금 — await 이전 동기 코드에서 설정해야 두 번째 이벤트가 체크 시 이미 true
+      _submitting  = true;
+      btn.textContent = '가입 중...';
+      btn.disabled = true;
+      console.log(`[회원가입] 요청 #${++_reqCount}`, { email });
+
       try {
-        await RivantApp.Auth.signUp(
-          document.getElementById('email').value.trim(),
-          pw.value,
+        const result = await RivantApp.Auth.signUp(
+          email, pw.value,
           document.getElementById('name').value.trim(),
           document.getElementById('phone').value.trim()
         );
-        alert('회원가입이 완료되었습니다! 이메일을 확인해주세요.');
-        window.location.href = 'login.html';
+
+        if (result.session) {
+          // ── Email Confirmation OFF (개발 환경 권장) ──────────────────────
+          // Supabase Dashboard → Authentication → Settings → Enable email confirmations: OFF
+          // signUp() 즉시 세션 반환 → 메일 미발송 → rate limit 없음
+          console.log('[회원가입] 이메일 인증 없음 — 즉시 로그인 처리');
+          sessionStorage.removeItem(PENDING_EMAIL_KEY);
+          alert('회원가입이 완료되었습니다!');
+          window.location.href = '../index.html';
+        } else {
+          // ── Email Confirmation ON (운영 환경) ────────────────────────────
+          // signUp() 인증 메일 발송 후 session=null 반환
+          // 동일 이메일로 재가입 시 메일 재발송 → rate limit 원인
+          // → sessionStorage에 저장해 클라이언트에서 재시도 차단
+          console.log('[회원가입] 인증 메일 발송됨 — 로그인 페이지로 이동');
+          sessionStorage.setItem(PENDING_EMAIL_KEY, email);
+          alert('회원가입이 완료되었습니다!\n가입하신 이메일로 인증 메일이 발송되었습니다.\n이메일 인증 후 로그인해주세요.\n\n※ 메일이 오지 않으면 스팸함을 확인해주세요.');
+          window.location.href = 'login.html';
+        }
       } catch (err) {
-        errEl.textContent = err.message || '회원가입 중 오류가 발생했습니다.';
+        console.error('[회원가입 실패]', err);
+
+        const code    = err.code    || '';
+        const message = err.message || '';
+        let errMsg;
+
+        if (message.startsWith('이미 가입된')) {
+          // main.js identities 체크에서 던진 한국어 메시지 (C 단계)
+          errMsg = message;
+        } else if (code === 'over_email_send_rate_limit' || message.toLowerCase().includes('rate limit')) {
+          errMsg = '이메일 발송 한도를 초과했습니다. 약 1시간 후 다시 시도해주세요.\n'
+                 + '개발 중이라면 Supabase 대시보드 → Authentication → Settings에서\n'
+                 + '"Enable email confirmations"를 OFF로 설정하면 이메일 없이 바로 가입됩니다.';
+        } else if (code === 'weak_password' || message.toLowerCase().includes('password')) {
+          errMsg = '비밀번호가 너무 단순합니다. 숫자·문자 조합 8자 이상으로 설정해주세요.';
+        } else if (message === 'Supabase not initialized') {
+          errMsg = '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
+        } else {
+          errMsg = message || '회원가입 중 오류가 발생했습니다.';
+        }
+
+        errEl.textContent = errMsg;
         errEl.style.display = 'block';
-        btn.textContent = '회원가입'; btn.disabled = false;
+        _submitting = false;
+        btn.textContent = '회원가입';
+        btn.disabled = false;
       }
     });
   </script>

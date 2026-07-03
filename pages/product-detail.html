@@ -157,7 +157,6 @@
         <div class="detail-rating" id="detailRating">
           <span class="stars">★★★★★</span>
           <span>0.0 (0개 리뷰)</span>
-          <span>·</span><span>찜 0개</span>
         </div>
 
         <div class="detail-price">
@@ -257,9 +256,9 @@
   let _selColorName = '';
   let _selSizeId = null;
   let _selSizeName = '';
-  let _qty = 1;
   let _hasColorOpts = false;
   let _hasSizeOpts = false;
+  let _selectedItems = []; // [{ colorId, colorName, sizeId, sizeName, qty, unitPrice, optKey }]
 
   const COLOR_MAP = {
     Black:'#111111', White:'#ffffff', Gray:'#9ca3af',
@@ -286,150 +285,168 @@
   }
 
   function hideSelectedOption() {
-    document.getElementById('selectedOptions').innerHTML = '';
-    document.getElementById('totalPrice').textContent = '0원';
+    renderSelectedItems();
   }
 
-  function renderSelectedOption() {
-    console.log('renderSelectedOption called');
-    console.log('selectedOptions el:', document.getElementById('selectedOptions'));
-    console.log('totalPrice el:', document.getElementById('totalPrice'));
-    console.log('[RENDER]', { color: _selColorName, size: _selSizeName });
-    if (!_product) return;
-    const unitPrice = currentUnitPrice();
-    const optText = [_selColorName, _selSizeName].filter(Boolean).join(' / ');
-    const html = `
-      <div class="selected-item">
-        <div style="flex:1;min-width:0">
-          <p class="selected-item-name">${_product.name}</p>
-          ${optText ? `<p class="selected-item-opt">${optText}</p>` : ''}
-        </div>
-        <div class="selected-item-qty">
-          <div class="qty-ctrl">
-            <button onclick="changeQty(-1)">−</button>
-            <span id="qtyDisplay">${_qty}</span>
-            <button onclick="changeQty(1)">+</button>
-          </div>
-          <span class="selected-item-price">${Number(unitPrice * _qty).toLocaleString('ko-KR')}원</span>
-          <button onclick="clearSelection()" title="삭제"
-            style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
-        </div>
-      </div>`;
-    console.log('[HTML]', html);
-    document.getElementById('selectedOptions').innerHTML = html;
-    console.log('[DONE]');
-    document.getElementById('totalPrice').textContent = Number(unitPrice * _qty).toLocaleString('ko-KR') + '원';
-  }
-
-  // 데이터 로더에서 호출하는 래퍼 — 둘 다 선택된 경우만 표시
-  function updateSelected() {
-    if (_product && _selColorName && _selSizeName) {
-      renderSelectedOption();
-    } else {
-      hideSelectedOption();
+  function renderSelectedItems() {
+    const container = document.getElementById('selectedOptions');
+    if (_selectedItems.length === 0) {
+      container.innerHTML = '';
+      document.getElementById('totalPrice').textContent = '0원';
+      return;
     }
+    container.innerHTML = _selectedItems.map((item, idx) => {
+      const optText = [item.colorName, item.sizeName].filter(Boolean).join(' / ');
+      return `
+        <div class="selected-item">
+          <div style="flex:1;min-width:0">
+            <p class="selected-item-name">${_product.name}</p>
+            ${optText ? `<p class="selected-item-opt">${optText}</p>` : ''}
+          </div>
+          <div class="selected-item-qty">
+            <div class="qty-ctrl">
+              <button onclick="changeQty(${idx},-1)">−</button>
+              <span>${item.qty}</span>
+              <button onclick="changeQty(${idx},1)">+</button>
+            </div>
+            <span class="selected-item-price">${Number(item.unitPrice * item.qty).toLocaleString('ko-KR')}원</span>
+            <button onclick="removeItem(${idx})" title="삭제"
+              style="width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:11px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--desc-text)">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+    const total = _selectedItems.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+    document.getElementById('totalPrice').textContent = total.toLocaleString('ko-KR') + '원';
+  }
+
+  function getOptionGroups() {
+    const groups = [];
+    if (_hasColorOpts) groups.push({ name: '색상', selectedValue: _selColorName });
+    if (_hasSizeOpts)  groups.push({ name: '사이즈', selectedValue: _selSizeName });
+    return groups;
+  }
+
+  function addToSelectedItems() {
+    if (!_product) return;
+
+    // 모든 필수 옵션이 선택된 경우에만 생성
+    const optionGroups = getOptionGroups();
+    const allSelected = optionGroups.every(group => group.selectedValue);
+    if (!allSelected) return;
+
+    const optKey = `${_selColorId}-${_selSizeId}`;
+    const unitPrice = currentUnitPrice(); // 상태 초기화 전에 먼저 계산
+
+    const existing = _selectedItems.find(item => item.optKey === optKey);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      _selectedItems.push({
+        colorId: _selColorId,
+        colorName: _selColorName,
+        sizeId: _selSizeId,
+        sizeName: _selSizeName,
+        qty: 1,
+        unitPrice,
+        optKey
+      });
+    }
+
+    // 생성 후 선택 상태 초기화 — 다음 옵션 선택을 받기 위해
+    _selColorId = null; _selColorName = '';
+    _selSizeId  = null; _selSizeName  = '';
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    const lbl = document.getElementById('selectedColorLabel');
+    if (lbl) lbl.textContent = '-';
+
+    renderSelectedItems();
+  }
+
+  // 데이터 로더에서 호출하는 래퍼
+  function updateSelected() {
+    renderSelectedItems();
   }
 
   window.selectColor = function(btn, color, cid) {
-    console.log('[EVENT] color click', cid, color);
     document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     _selColorName = color;
     _selColorId = cid || null;
-    console.log('색상 선택 후 _selColorName:', _selColorName);
     document.getElementById('selectedColorLabel').textContent = color;
-    // 색상만 선택 → 표시 안 함. 색상+사이즈 모두 선택 시만 표시
-    if (_selColorName && _selSizeName) {
-      renderSelectedOption();
-    } else {
-      hideSelectedOption();
-    }
+    addToSelectedItems();
   };
 
   window.selectSize = function(btn, size, sid) {
-    console.log('[EVENT] size click', sid, size);
     if (btn.classList.contains('disabled')) return;
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     _selSizeName = size;
     _selSizeId = sid || null;
-    console.log('사이즈 선택 후 _selSizeName:', _selSizeName);
-    // 사이즈만 선택 → 표시 안 함. 색상+사이즈 모두 선택 시만 표시
-    if (_selColorName && _selSizeName) {
-      renderSelectedOption();
-    } else {
-      hideSelectedOption();
-    }
+    addToSelectedItems();
+  };
+
+  window.removeItem = function(idx) {
+    _selectedItems.splice(idx, 1);
+    renderSelectedItems();
   };
 
   window.clearSelection = function() {
-    _selColorId = null; _selColorName = null;
-    _selSizeId  = null; _selSizeName  = null;
-    _qty = 1;
+    _selectedItems = [];
+    _selColorId = null; _selColorName = '';
+    _selSizeId  = null; _selSizeName  = '';
     document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
     const lbl = document.getElementById('selectedColorLabel');
     if (lbl) lbl.textContent = '-';
-    hideSelectedOption();
+    renderSelectedItems();
   };
 
-  window.changeQty = function(delta) {
-    _qty = Math.max(1, _qty + delta);
-    const el = document.getElementById('qtyDisplay');
-    if (el) el.textContent = _qty;
-    const unitPrice = currentUnitPrice();
-    const priceEl = document.querySelector('.selected-item-price');
-    if (priceEl) priceEl.textContent = RivantApp.fmtPrice(unitPrice * _qty);
-    document.getElementById('totalPrice').textContent = RivantApp.fmtPrice(unitPrice * _qty);
+  window.changeQty = function(idx, delta) {
+    if (!_selectedItems[idx]) return;
+    _selectedItems[idx].qty = Math.max(1, _selectedItems[idx].qty + delta);
+    renderSelectedItems();
   };
 
   window.addToCart = function() {
-    console.log('[CART CLICK]');
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
-    if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
-      alert('옵션을 선택해주세요.'); return;
-    }
-    const sku = getCurrentSku();
-    console.log('[ADD CART DATA]', {
-      productId: _product.id,
-      color: _selColorName,
-      size: _selSizeName,
-      qty: _qty
-    });
-    RivantApp.Cart.add({
-      sku: sku?.sku || `${_product.id}-${_selColorName}-${_selSizeName}`,
-      name: _product.name,
-      option: [_selColorName, _selSizeName].filter(Boolean).join(' / ') || '기본',
-      price: sku?.price || currentUnitPrice(),
-      salePrice: currentUnitPrice(),
-      qty: _qty,
-      image: _product.thumbnail
+    if (_selectedItems.length === 0) { alert('옵션을 선택해주세요.'); return; }
+    _selectedItems.forEach(item => {
+      const sku = _activeSkus.find(s =>
+        (item.colorId ? s.color_id === item.colorId : true) &&
+        (item.sizeId  ? s.size_id  === item.sizeId  : true)
+      ) || _activeSkus[0] || null;
+      RivantApp.Cart.add({
+        sku: sku?.sku || `${_product.id}-${item.colorName}-${item.sizeName}`,
+        name: _product.name,
+        option: [item.colorName, item.sizeName].filter(Boolean).join(' / ') || '기본',
+        price: sku?.price || item.unitPrice,
+        salePrice: item.unitPrice,
+        qty: item.qty,
+        image: _product.thumbnail
+      });
     });
     RivantApp.showToast('장바구니에 담았습니다!');
     setTimeout(() => { window.location.href = 'cart.html'; }, 600);
   };
 
   window.buyNow = function() {
-    console.log('[BUY NOW CLICK]');
     if (!_product) { alert('상품 정보를 불러오는 중입니다.'); return; }
-    if ((_hasColorOpts && !_selColorName) || (_hasSizeOpts && !_selSizeName)) {
-      alert('옵션을 선택해주세요.'); return;
-    }
-    const sku = getCurrentSku();
-    console.log('[GO CHECKOUT]', {
-      productId: _product.id,
-      color: _selColorName,
-      size: _selSizeName,
-      qty: _qty
-    });
-    RivantApp.Cart.add({
-      sku: sku?.sku || `${_product.id}-${_selColorName}-${_selSizeName}`,
-      name: _product.name,
-      option: [_selColorName, _selSizeName].filter(Boolean).join(' / ') || '기본',
-      price: sku?.price || currentUnitPrice(),
-      salePrice: currentUnitPrice(),
-      qty: _qty,
-      image: _product.thumbnail
+    if (_selectedItems.length === 0) { alert('옵션을 선택해주세요.'); return; }
+    _selectedItems.forEach(item => {
+      const sku = _activeSkus.find(s =>
+        (item.colorId ? s.color_id === item.colorId : true) &&
+        (item.sizeId  ? s.size_id  === item.sizeId  : true)
+      ) || _activeSkus[0] || null;
+      RivantApp.Cart.add({
+        sku: sku?.sku || `${_product.id}-${item.colorName}-${item.sizeName}`,
+        name: _product.name,
+        option: [item.colorName, item.sizeName].filter(Boolean).join(' / ') || '기본',
+        price: sku?.price || item.unitPrice,
+        salePrice: item.unitPrice,
+        qty: item.qty,
+        image: _product.thumbnail
+      });
     });
     window.location.href = 'checkout.html';
   };

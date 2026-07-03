@@ -347,6 +347,69 @@
   margin: 0 auto;
 }
 
+/* ── 검색 추가 UI ── */
+#searchClear:hover { background: var(--bg-light); color: var(--black); }
+.search-input-wrap input { padding-right: 48px; }
+
+#searchSuggest {
+  display: none;
+  max-width: 800px;
+  margin: -32px auto 32px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-input);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background var(--trans-fast);
+}
+.suggest-item:hover { background: var(--bg-light); }
+.suggest-item svg { flex-shrink: 0; color: var(--desc-text); }
+.suggest-item span:first-of-type { flex: 1; }
+.suggest-brand { font-size: 12px; color: var(--desc-text); flex-shrink: 0; }
+
+#searchRecent { max-width: 800px; margin: 0 auto 32px; }
+.recent-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color var(--trans-fast);
+}
+.recent-tag:hover { border-color: var(--black); }
+.recent-tag-del {
+  font-size: 11px;
+  color: var(--desc-text);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.recent-tag-del:hover { color: var(--black); }
+.recent-clear-all {
+  font-size: 12px;
+  color: var(--desc-text);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 4px;
+}
+mark {
+  background: rgba(255, 81, 18, 0.18);
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+}
+
 /* Mobile Menu */
 .mobile-menu-btn {
   display: none;

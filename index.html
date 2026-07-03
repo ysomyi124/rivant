@@ -184,7 +184,16 @@
     <div class="search-body">
       <div class="search-input-wrap">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" placeholder="검색어를 입력하세요" autocomplete="off" />
+        <input id="searchInput" type="search" placeholder="검색어를 입력하세요" autocomplete="off" />
+        <button id="searchClear" aria-label="검색어 지우기"
+          style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:36px;height:36px;display:none;align-items:center;justify-content:center;border-radius:50%;color:var(--desc-text);cursor:pointer;font-size:16px">✕</button>
+      </div>
+      <!-- 자동완성 -->
+      <div id="searchSuggest"></div>
+      <!-- 최근 검색어 -->
+      <div id="searchRecent" style="display:none">
+        <p style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--desc-text);margin-bottom:14px">최근 검색어</p>
+        <div id="recentList" class="keyword-list"></div>
       </div>
       <div class="search-keywords">
         <h4>인기 검색어</h4>
@@ -796,6 +805,7 @@
 <script src="js/config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/header.js"></script>
+<script src="js/search.js"></script>
 <script src="js/animation.js"></script>
 <script src="js/swiper-init.js"></script>
 <script>

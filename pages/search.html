@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>검색 결과 — RIVANT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <style>
+    body { font-family: var(--font-ko); padding-top: var(--header-h); }
+
+    /* 검색 결과 헤더 */
+    .search-result-header {
+      background: var(--bg-light);
+      padding: 48px 60px;
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+    }
+    .search-result-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--desc-text);
+      margin-bottom: 12px;
+    }
+    .search-result-query {
+      font-family: var(--font-en);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+    .search-result-count {
+      font-size: 14px;
+      color: var(--desc-text);
+    }
+    .search-result-count strong { color: var(--black); }
+
+    /* 툴바 */
+    .list-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+    }
+    .list-count { font-size: 14px; color: var(--desc-text); }
+    .list-sort {
+      padding: 10px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-input);
+      font-size: 14px;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font-ko);
+    }
+
+    /* 그리드 */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px 20px;
+      padding-bottom: 40px;
+    }
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--desc-text);
+      font-size: 15px;
+    }
+    .empty-msg strong { display: block; font-size: 18px; color: var(--black); margin-bottom: 8px; }
+    .empty-msg p { margin-bottom: 40px; }
+
+    /* 추천 상품 (결과 없을 때) */
+    .recommend-section { padding-bottom: 80px; }
+    .recommend-section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+      color: var(--desc-text);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 40px 0 80px;
+    }
+    .page-btn {
+      min-width: 40px;
+      height: 40px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--black);
+      transition: all var(--trans-fast);
+      font-family: var(--font-en);
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--black); background: var(--black); color: var(--white); }
+    .page-btn.active { border-color: var(--black); background: var(--black); color: var(--white); font-weight: 700; }
+    .page-btn:disabled { color: var(--line); cursor: not-allowed; }
+    .page-ellipsis { padding: 0 4px; color: var(--desc-text); line-height: 40px; }
+
+    /* 검색창 추가 스타일 */
+    #searchClear {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--desc-text);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background var(--trans-fast), color var(--trans-fast);
+    }
+    #searchClear:hover { background: var(--bg-light); color: var(--black); }
+    .search-input-wrap input { padding-right: 48px; }
+
+    /* 자동완성 */
+    #searchSuggest {
+      display: none;
+      max-width: 800px;
+      margin: -32px auto 32px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-input);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .suggest-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background var(--trans-fast);
+    }
+    .suggest-item:hover { background: var(--bg-light); }
+    .suggest-item svg { flex-shrink: 0; color: var(--desc-text); }
+    .suggest-item span:first-of-type { flex: 1; }
+    .suggest-brand { font-size: 12px; color: var(--desc-text); flex-shrink: 0; }
+
+    /* 최근 검색어 */
+    #searchRecent {
+      max-width: 800px;
+      margin: 0 auto 32px;
+    }
+    .search-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--desc-text);
+      margin-bottom: 14px;
+    }
+    #recentList { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .recent-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color var(--trans-fast);
+    }
+    .recent-tag:hover { border-color: var(--black); }
+    .recent-tag-text { cursor: pointer; }
+    .recent-tag-del {
+      font-size: 11px;
+      color: var(--desc-text);
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+    }
+    .recent-tag-del:hover { color: var(--black); }
+    .recent-clear-all {
+      font-size: 12px;
+      color: var(--desc-text);
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    @media(max-width:1024px) { .product-grid { grid-template-columns: repeat(3,1fr); } .search-result-header { padding: 40px 32px; } .search-result-query { font-size: 28px; } }
+    @media(max-width:768px)  { .product-grid { grid-template-columns: repeat(2,1fr); gap: 24px 12px; } .search-result-header { padding: 32px 20px; } .search-result-query { font-size: 22px; } }
+  </style>
+</head>
+<body>
+  <div class="overlay-bg"></div>
+
+  <header id="header" class="scrolled">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo">
+        <img src="../images/logo_w.png" alt="RIVANT" class="logo-white" />
+        <img src="../images/logo_b.png" alt="RIVANT" class="logo-black" />
+      </a>
+      <nav class="header-nav">
+        <div class="nav-item"><a href="product-list.html?cat=men">Men</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=women">Women</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+        <div class="nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+        <div class="nav-item"><a href="promotion.html">Promotion</a></div>
+        <div class="nav-item"><a href="review.html">Review</a></div>
+      </nav>
+      <div class="header-icons">
+        <button class="icon-btn" id="searchOpen" aria-label="검색">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <a href="cart.html" class="icon-btn" aria-label="장바구니">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <a href="mypage.html" class="icon-btn mypage-link" aria-label="마이페이지" data-mypage="mypage.html">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <button class="mobile-menu-btn" aria-label="메뉴"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+
+    <!-- 검색 오버레이 -->
+    <div class="search-overlay" role="dialog" aria-label="검색">
+      <div class="search-overlay-header">
+        <a href="../index.html" class="header-logo">
+          <img src="../images/logo_b.png" alt="RIVANT" style="height:24px" />
+        </a>
+        <button class="search-close" aria-label="닫기">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="search-body">
+        <!-- 입력창 -->
+        <div class="search-input-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchInput" type="search" placeholder="검색어를 입력하세요" autocomplete="off" />
+          <button id="searchClear" aria-label="검색어 지우기">✕</button>
+        </div>
+        <!-- 자동완성 -->
+        <div id="searchSuggest"></div>
+        <!-- 최근 검색어 -->
+        <div id="searchRecent" style="display:none">
+          <p class="search-section-title">최근 검색어</p>
+          <div id="recentList" class="keyword-list"></div>
+        </div>
+        <!-- 인기 검색어 -->
+        <div class="search-keywords">
+          <h4>인기 검색어</h4>
+          <div class="keyword-list">
+            <span class="keyword-tag">러닝화</span>
+            <span class="keyword-tag">레깅스</span>
+            <span class="keyword-tag">트레이닝 팬츠</span>
+            <span class="keyword-tag">스포츠 브라</span>
+            <span class="keyword-tag">백팩</span>
+            <span class="keyword-tag">퀵드라이 티셔츠</span>
+            <span class="keyword-tag">캡모자</span>
+            <span class="keyword-tag">압박 양말</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" aria-label="모바일 메뉴">
+    <div class="mobile-nav-header">
+      <a href="../index.html"><img src="../images/logo_b.png" alt="RIVANT" style="height:22px" /></a>
+      <button class="mobile-nav-close search-close" aria-label="메뉴 닫기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav-body">
+      <div class="mobile-nav-item"><a href="product-list.html?cat=men">Men</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=women">Women</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=shoes">Shoes</a></div>
+      <div class="mobile-nav-item"><a href="product-list.html?cat=acc">ACC</a></div>
+      <div class="mobile-nav-item"><a href="promotion.html">Promotion</a></div>
+    </div>
+    <div class="mobile-nav-icons">
+      <a href="login.html" class="btn btn-secondary btn-sm">로그인</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">회원가입</a>
+    </div>
+  </nav>
+
+  <!-- 검색 결과 헤더 -->
+  <div class="search-result-header">
+    <p class="search-result-label">검색 결과</p>
+    <h1 class="search-result-query" id="resultQuery">&nbsp;</h1>
+    <p class="search-result-count">총 <strong id="resultCount">0</strong>개의 상품</p>
+  </div>
+
+  <main class="inner">
+    <div class="list-toolbar">
+      <p class="list-count">총 <strong id="gridCount">0</strong>개 상품</p>
+      <select class="list-sort" id="sortSelect">
+        <option value="default">기본순</option>
+        <option value="popular">인기순</option>
+        <option value="low">낮은가격순</option>
+        <option value="high">높은가격순</option>
+        <option value="new">최신순</option>
+      </select>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <p class="empty-msg" style="padding:40px">검색 중…</p>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/header.js"></script>
+  <script src="../js/search.js"></script>
+  <script>
+  (async function () {
+    const PAGE_SIZE = 16;
+
+    const params = new URLSearchParams(location.search);
+    const query  = (params.get('q') || '').trim();
+
+    const queryEl   = document.getElementById('resultQuery');
+    const countEl   = document.getElementById('resultCount');
+    const gridCountEl = document.getElementById('gridCount');
+    const grid      = document.getElementById('productGrid');
+    const pagination = document.getElementById('pagination');
+    const sortSel   = document.getElementById('sortSelect');
+    const searchInput = document.getElementById('searchInput');
+
+    // 검색창에 현재 검색어 유지
+    if (searchInput) searchInput.value = query;
+    queryEl.textContent = `"${query}"`;
+    document.title = `"${query}" 검색 결과 — RIVANT`;
+
+    if (!query) {
+      grid.innerHTML = '<p class="empty-msg"><strong>검색어를 입력해주세요.</strong></p>';
+      countEl.textContent = '0';
+      gridCountEl.textContent = '0';
+      return;
+    }
+
+    let _all  = [];
+    let _page = 1;
+
+    /* ── 상품 카드 HTML ── */
+    function cardHTML(p) {
+      const thumb = p.thumbnail || RivantSearch.FALLBACK_IMG;
+      const hl = t => RivantSearch.highlight(t, query);
+      return `<a href="product-detail.html?id=${p.id}" class="product-card">
+        <div class="product-card__img">
+          <img src="${thumb}" alt="${RivantSearch.esc(p.name)}" class="img-main" loading="lazy"
+               onerror="this.src='${RivantSearch.FALLBACK_IMG}'" />
+          <img src="${thumb}" alt="" class="img-hover" loading="lazy"
+               onerror="this.src='${RivantSearch.FALLBACK_IMG}'" />
+          <button class="product-card__wish"
+                  onclick="event.preventDefault();this.classList.toggle('active')" aria-label="찜">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="product-card__info">
+          ${p.brandName ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${hl(p.brandName)}</p>` : ''}
+          <p class="product-card__name">${hl(p.name)}</p>
+          <div class="product-card__price">
+            ${p.hasSale ? `<span class="price-original">${p.minOrig.toLocaleString()}원</span>` : ''}
+            <span class="price-sale">${p.minSale > 0 ? p.minSale.toLocaleString() + '원' : '-'}</span>
+            ${p.rate > 0 ? `<span class="price-rate">${p.rate}%</span>` : ''}
+          </div>
+          ${p.reviewCount > 0 ? `<p style="font-size:12px;color:var(--desc-text);margin-top:4px">★ ${p.reviewCount.toLocaleString()}개 리뷰</p>` : ''}
+        </div>
+      </a>`;
+    }
+
+    /* ── 그리드 렌더링 ── */
+    function renderGrid(list) {
+      if (!list.length) {
+        grid.innerHTML = '';
+        return;
+      }
+      grid.innerHTML = list.map(cardHTML).join('');
+    }
+
+    /* ── 페이지네이션 ── */
+    function renderPagination(total, current) {
+      const pages = Math.ceil(total / PAGE_SIZE);
+      if (pages <= 1) { pagination.innerHTML = ''; return; }
+
+      const items = [];
+      items.push(`<button class="page-btn" onclick="goPage(${current - 1})" ${current === 1 ? 'disabled' : ''}>‹</button>`);
+
+      const start = Math.max(1, current - 2);
+      const end   = Math.min(pages, current + 2);
+      if (start > 1) items.push(`<button class="page-btn" onclick="goPage(1)">1</button>`);
+      if (start > 2) items.push(`<span class="page-ellipsis">…</span>`);
+      for (let i = start; i <= end; i++) {
+        items.push(`<button class="page-btn ${i === current ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`);
+      }
+      if (end < pages - 1) items.push(`<span class="page-ellipsis">…</span>`);
+      if (end < pages) items.push(`<button class="page-btn" onclick="goPage(${pages})">${pages}</button>`);
+      items.push(`<button class="page-btn" onclick="goPage(${current + 1})" ${current === pages ? 'disabled' : ''}>›</button>`);
+
+      pagination.innerHTML = items.join('');
+    }
+
+    window.goPage = function (page) {
+      const pages = Math.ceil(_all.length / PAGE_SIZE);
+      if (page < 1 || page > pages) return;
+      _page = page;
+      renderGrid(_all.slice((_page - 1) * PAGE_SIZE, _page * PAGE_SIZE));
+      renderPagination(_all.length, _page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    /* ── 정렬 ── */
+    function applySort(list, v) {
+      const s = [...list];
+      if      (v === 'low')     s.sort((a, b) => a.minSale - b.minSale);
+      else if (v === 'high')    s.sort((a, b) => b.minSale - a.minSale);
+      else if (v === 'popular') s.sort((a, b) => b.reviewCount - a.reviewCount);
+      else if (v === 'new')     s.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+      return s;
+    }
+
+    sortSel.addEventListener('change', () => {
+      _page = 1;
+      const sorted = applySort(_all, sortSel.value);
+      renderGrid(sorted.slice(0, PAGE_SIZE));
+      renderPagination(sorted.length, 1);
+      // _all 유지 (정렬만 바꾸려면 sorted로 재할당)
+      _all = sorted;
+    });
+
+    /* ── 빈 결과 UI + 추천 상품 ── */
+    async function showEmpty() {
+      const recs = await RivantSearch.fetchRecommended(8);
+      grid.innerHTML = `
+        <div class="empty-msg">
+          <strong>검색 결과가 없습니다.</strong>
+          <p>"${RivantSearch.esc(query)}" 에 대한 상품을 찾을 수 없어요.<br>다른 검색어를 입력해보세요.</p>
+        </div>`;
+      if (recs.length) {
+        const recSection = document.createElement('div');
+        recSection.className = 'recommend-section';
+        recSection.style.gridColumn = '1 / -1';
+        recSection.innerHTML = `
+          <h3>추천 상품</h3>
+          <div class="product-grid" style="padding-bottom:0">${
+            recs.map(p => {
+              const thumb = p.thumbnail || RivantSearch.FALLBACK_IMG;
+              return `<a href="product-detail.html?id=${p.id}" class="product-card">
+                <div class="product-card__img">
+                  <img src="${thumb}" alt="${RivantSearch.esc(p.name)}" class="img-main" loading="lazy" onerror="this.src='${RivantSearch.FALLBACK_IMG}'" />
+                  <img src="${thumb}" alt="" class="img-hover" loading="lazy" />
+                </div>
+                <div class="product-card__info">
+                  ${p.brandName ? `<p class="product-card__name" style="font-size:11px;color:var(--desc-text);margin-bottom:2px">${RivantSearch.esc(p.brandName)}</p>` : ''}
+                  <p class="product-card__name">${RivantSearch.esc(p.name)}</p>
+                  <div class="product-card__price">
+                    ${p.hasSale ? `<span class="price-original">${p.minOrig.toLocaleString()}원</span>` : ''}
+                    <span class="price-sale">${p.minSale > 0 ? p.minSale.toLocaleString() + '원' : '-'}</span>
+                    ${p.rate > 0 ? `<span class="price-rate">${p.rate}%</span>` : ''}
+                  </div>
+                </div>
+              </a>`;
+            }).join('')
+          }</div>`;
+        grid.appendChild(recSection);
+      }
+    }
+
+    /* ── 메인 로직 ── */
+    try {
+      const results = await RivantSearch.searchProducts(query);
+      _all = results;
+
+      countEl.textContent    = results.length.toLocaleString();
+      gridCountEl.textContent = results.length.toLocaleString();
+
+      if (!results.length) {
+        pagination.innerHTML = '';
+        await showEmpty();
+        return;
+      }
+
+      renderGrid(_all.slice(0, PAGE_SIZE));
+      renderPagination(_all.length, _page);
+
+    } catch (err) {
+      console.error('[search]', err);
+      grid.innerHTML = `<p class="empty-msg"><strong>검색 중 오류가 발생했습니다.</strong><br>
+        <small style="color:#bbb;font-size:12px">${err.message}</small><br>
+        <a href="javascript:location.reload()" style="color:var(--black);text-decoration:underline">다시 시도</a></p>`;
+    }
+  })();
+  </script>
+</body>
+</html>
