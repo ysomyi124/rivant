@@ -69,17 +69,30 @@ const Auth = {
       options: { data: { name, phone } },
     });
     console.log('[Auth.signUp] 응답 error:', error);
-    if (error) throw error;
 
-    // 이미 가입된 이메일 감지
-    // Supabase는 미인증 이메일 재가입 시 error=null, identities=[] 반환하며 메일을 재발송
-    // → 차단하지 않으면 rate limit exceeded 발생
+    if (error) {
+      // ── Confirm email OFF: 이미 가입된 이메일 → Supabase가 직접 error 반환 ──
+      // error.code = 'user_already_exists' 또는 message에 'already registered' 포함
+      const isDuplicate =
+        error.code === 'user_already_exists' ||
+        (error.message || '').toLowerCase().includes('already registered') ||
+        (error.message || '').toLowerCase().includes('already been registered');
+      if (isDuplicate) {
+        console.warn('[Auth.signUp] 이미 가입된 이메일 (Supabase 직접 에러):', email, error.code);
+        throw new Error('이미 가입된 이메일입니다. 로그인하거나 비밀번호 찾기를 이용해주세요.');
+      }
+      throw error;
+    }
+
+    // ── Confirm email ON: 이미 가입된 이메일 → error=null, identities=[] 반환 ──
+    // 방치하면 인증 메일 재발송 → rate limit exceeded 발생
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
       console.warn('[Auth.signUp] 이미 가입된 이메일 (identities 빈 배열):', data.user.email);
       throw new Error('이미 가입된 이메일입니다. 로그인하거나 비밀번호 찾기를 이용해주세요.');
     }
 
-    console.log('[Auth.signUp] 가입 완료 — session:', data.session ? '있음(즉시로그인)' : 'null(이메일인증필요)');
+    const mode = data.session ? '즉시 로그인 (Confirm email OFF)' : '이메일 인증 대기 (Confirm email ON)';
+    console.log('[Auth.signUp] 가입 완료 —', mode);
 
     // users 테이블 insert — 실패해도 가입 자체는 성공으로 처리
     if (data.user) {
