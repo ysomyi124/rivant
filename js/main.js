@@ -35,63 +35,64 @@ const Cart = {
 };
 
 // Auth helpers
+// API 레벨 호출 카운터 — 프론트엔드 가드 우회 시 이 숫자가 1을 초과함
+let _signUpCallCount = 0;
+let _signInCallCount = 0;
+
 const Auth = {
   async getUser() {
     if (!supabase) return null;
     try {
-      // getSession은 localStorage에서 즉시 읽음 — 네트워크 요청 없음
       const { data: { session } } = await supabase.auth.getSession();
       return session?.user ?? null;
     } catch (e) { return null; }
   },
   async signIn(email, password) {
     if (!supabase) throw new Error('Supabase not initialized');
-    console.log('[Auth.signIn] 요청:', { email });
+    console.log(`[Auth.signIn] ── 호출 #${++_signInCallCount} ──`, { email });
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    console.log('[Auth.signIn] 응답 data:', data);
     console.log('[Auth.signIn] 응답 error:', error);
     if (error) throw error;
-    console.log('[Auth.signIn] 세션:', data.session);
-    console.log('[Auth.signIn] 유저:', data.user);
+    console.log('[Auth.signIn] 세션 발급:', !!data.session, '/ 유저:', data.user?.email);
     return data;
   },
   async signUp(email, password, name, phone) {
     if (!supabase) throw new Error('Supabase not initialized');
-    console.log('[Auth.signUp] 요청:', { email, name, phone });
+
+    // ── 호출 횟수 추적 ───────────────────────────────────────────────────
+    // 프론트엔드의 _submitting 가드가 정상 작동하면 이 값은 항상 1
+    // 2 이상이면 이벤트 리스너 중복 등록 또는 가드 우회가 발생한 것
+    console.log(`[Auth.signUp] ── 호출 #${++_signUpCallCount} ──`, { email, name, phone });
+
     const { data, error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { name, phone } }
+      options: { data: { name, phone } },
     });
-    console.log('[Auth.signUp] 응답 data:', data);
     console.log('[Auth.signUp] 응답 error:', error);
     if (error) throw error;
 
     // 이미 가입된 이메일 감지
-    // Supabase는 미인증 이메일로 재가입 시 오류 없이 identities=[] 반환하며 인증 메일을 재발송함
-    // → 방치하면 rate limit exceeded 발생
+    // Supabase는 미인증 이메일 재가입 시 error=null, identities=[] 반환하며 메일을 재발송
+    // → 차단하지 않으면 rate limit exceeded 발생
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-      console.warn('[Auth.signUp] 이미 가입된 이메일 — identities 빈 배열:', data.user.email);
+      console.warn('[Auth.signUp] 이미 가입된 이메일 (identities 빈 배열):', data.user.email);
       throw new Error('이미 가입된 이메일입니다. 로그인하거나 비밀번호 찾기를 이용해주세요.');
     }
 
-    // auth.users 생성 확인
-    console.log('[Auth.signUp] auth.user:', data.user);
-    console.log('[Auth.signUp] session:', data.session, '(null이면 이메일 인증 필요)');
+    console.log('[Auth.signUp] 가입 완료 — session:', data.session ? '있음(즉시로그인)' : 'null(이메일인증필요)');
 
-    // users 테이블 insert — 실패해도 회원가입 자체는 성공으로 처리
+    // users 테이블 insert — 실패해도 가입 자체는 성공으로 처리
     if (data.user) {
       const { error: dbError } = await supabase.from('users').insert({
-        id: data.user.id,
+        id:            data.user.id,
         email,
         password_hash: '(managed by supabase auth)',
         name,
         phone,
-        status: 'ACTIVE',
+        status:        'ACTIVE',
       });
       if (dbError) {
         console.warn('[Auth.signUp] users 테이블 insert 실패 (무시):', dbError.message, dbError.code);
-      } else {
-        console.log('[Auth.signUp] users 테이블 insert 성공');
       }
     }
     return data;

@@ -164,15 +164,21 @@
     //
     const PENDING_EMAIL_KEY = 'rivant_pending_email';
 
-    let _submitting = false;
-    let _reqCount   = 0;
+    let _submitting   = false;  // 진행 중 플래그
+    let _reqCount     = 0;      // 실제 API 호출 횟수
+    let _blockedCount = 0;      // 차단된 중복 시도 횟수
+
+    // ── 이벤트 리스너 등록 확인 ──────────────────────────────────────────
+    // 이 로그가 페이지 로드 시 1회만 출력되어야 함
+    // 2회 이상이면 스크립트가 중복 삽입된 것
+    console.log('[회원가입] submit 이벤트 리스너 등록됨 (1회만 출력되어야 함)');
 
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       // A. 진행 중인 요청 차단 (더블클릭·연속 제출 방지)
       if (_submitting) {
-        console.warn('[회원가입] 중복 요청 차단 — 현재 요청 처리 중');
+        console.warn(`[회원가입] 중복 요청 차단 #${++_blockedCount} — 현재 요청 #${_reqCount} 처리 중`);
         return;
       }
 
